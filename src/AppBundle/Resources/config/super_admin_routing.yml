@@ -4,7 +4,9 @@ app_super_admin_homepage:
 
 app_super_admin_company_list:
     path: /company/list/{page}
-    defaults: {_controller: AppBundle:SuperAdmin:companyList}
+    defaults: {_controller: AppBundle:SuperAdmin:companyList, page: 1}
+    requirements:
+        page: \d+
 
 app_super_admin_company_add:
     path: /company/add
@@ -13,7 +15,11 @@ app_super_admin_company_add:
 app_super_admin_company_edit:
     path: /company/edit/{company}
     defaults: {_controller: AppBundle:SuperAdmin:companyEdit}
+    requirements:
+        company: \d+
 
 app_super_admin_company_remove:
     path: /company/remove/{company}
     defaults: {_controller: AppBundle:SuperAdmin:companyRemove}
+    requirements:
+        company: \d+
