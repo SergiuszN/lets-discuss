@@ -2,5 +2,51 @@
 
 {% block body %}
     {% include '@App/superAdmin/components/navbar.html.twig' %}
-    <h1>Company list</h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ path('app_super_admin_homepage') }}">Dashboard</a></li>
+        <li class="active">Company List</li>
+    </ol>
+
+    <div class="page-header">
+        <h1>Company Lists <br class="visible-xs"><small>Here you can see all added companies</small></h1>
+    </div>
+
+    <div class="text-right">
+        <a class="btn btn-default" href="{{ path('app_super_admin_company_add') }}"> <i class="fa fa-plus-circle" aria-hidden="true"></i> Create New</a>
+    </div>
+
+    <div class="table-responsive" style="margin-top: 15px;">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if pagination.getTotalItemCount == 0 %}
+                <tr>
+                    <td colspan="8" class="text-center"><h4>There is no a companies</h4></td>
+                </tr>
+            {% endif %}
+            {% for company in pagination %}
+                <tr>
+                    <td>{{ company.id }}</td>
+                    <td>{{ company.name }}</td>
+                    <td>{{ company.description }}</td>
+                    <td>
+                        <a href="{{ path('app_super_admin_company_edit', {company: company.id}) }}" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</a>
+                        <a href="{{ path('app_super_admin_company_remove', {company: company.id}) }}" class="btn btn-xs btn-danger"><span class="fa fa-trash"></span> Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
 {% endblock %}

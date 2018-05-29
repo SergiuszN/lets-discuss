@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Class Company
  *
  * @package AppBundle\Entity
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CompanyRepository")
  * @ORM\Table(name="company")
  */
 class Company

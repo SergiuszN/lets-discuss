@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Company;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class SuperAdminController extends Controller
@@ -24,7 +25,15 @@ class SuperAdminController extends Controller
      */
     public function companyListAction($page)
     {
-        return $this->render('@App/superAdmin/companyList.html.twig', array('page' => $page));
+        $pagination = $this->get('knp_paginator')->paginate(
+            $this->getDoctrine()->getRepository(Company::class)->getSuperAdminListQuery(),
+            $page,
+            $this->getParameter('super_admin_list_per_page')
+        );
+
+        return $this->render('@App/superAdmin/companyList.html.twig', [
+            'pagination' => $pagination
+        ]);
     }
 
     /**
