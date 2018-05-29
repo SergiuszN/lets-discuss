@@ -1,0 +1,11 @@
+<div>
+    <p>Hi, {{ name }}</p>
+    <p>
+        You company in LestDiscuss is successfully registered,
+        now you can login by: <a href="{{ absolute_url(path('fos_user_security_login')) }}">login</a>
+    </p>
+    <p>
+        Username: {{ email }}<br>
+        Password: {{ password }}
+    </p>
+</div>
