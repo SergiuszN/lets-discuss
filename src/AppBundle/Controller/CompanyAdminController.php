@@ -48,7 +48,7 @@ class CompanyAdminController extends Controller
      */
     public function managerEditAction($manager)
     {
-        return $this->render('@App/companyAdmin/managerEdit.html.twig', array('manager' => $manager));
+        return $this->render('@App/companyAdmin/managerEdit.html.twig');
     }
 
     /**
@@ -60,7 +60,7 @@ class CompanyAdminController extends Controller
      */
     public function managerRemoveAction($manager)
     {
-        return $this->render('@App/companyAdmin/managerRemove.html.twig', array('manager' => $manager));
+        return $this->render('@App/companyAdmin/managerRemove.html.twig');
     }
 
     /**
@@ -73,13 +73,7 @@ class CompanyAdminController extends Controller
      */
     public function workerListAction($manager, $page)
     {
-        return $this->render(
-            '@App/companyAdmin/workerList.html.twig',
-            array(
-                'manager' => $manager,
-                'page' => $page
-            )
-        );
+        return $this->render('@App/companyAdmin/workerList.html.twig', array('page' => $page));
     }
 
     /**
@@ -91,7 +85,7 @@ class CompanyAdminController extends Controller
      */
     public function workerAddAction($manager)
     {
-        return $this->render('@App/companyAdmin/workerAdd.html.twig', array('manager' => $manager,));
+        return $this->render('@App/companyAdmin/workerAdd.html.twig');
     }
 
     /**
@@ -104,13 +98,7 @@ class CompanyAdminController extends Controller
      */
     public function workerEditAction($manager, CompanyWorker $worker)
     {
-        return $this->render(
-            '@App/companyAdmin/workerEdit.html.twig',
-            array(
-                'manager' => $manager,
-                'worker' => $worker
-            )
-        );
+        return $this->render('@App/companyAdmin/workerEdit.html.twig');
     }
 
     /**
@@ -122,13 +110,7 @@ class CompanyAdminController extends Controller
      */
     public function workerRemoveAction($manager, CompanyWorker $worker)
     {
-        return $this->render(
-            '@App/companyAdmin/workerRemove.html.twig',
-            array(
-                'manager' => $manager,
-                'worker' => $worker
-            )
-        );
+        return $this->render( '@App/companyAdmin/workerRemove.html.twig');
     }
 
     /**
@@ -142,14 +124,7 @@ class CompanyAdminController extends Controller
      */
     public function appraiseListAction($manager, CompanyWorker $worker, $page)
     {
-        return $this->render(
-            '@App/companyAdmin/appraiseList.html.twig',
-            array(
-                'manager' => $manager,
-                'worker' => $worker,
-                'page' => $page
-            )
-        );
+        return $this->render( '@App/companyAdmin/appraiseList.html.twig', array('page' => $page));
     }
 
     /**
@@ -162,13 +137,7 @@ class CompanyAdminController extends Controller
      */
     public function appraiseAddAction($manager, CompanyWorker $worker)
     {
-        return $this->render(
-            '@App/companyAdmin/appraiseAdd.html.twig',
-            array(
-                'manager' => $manager,
-                'worker' => $worker
-            )
-        );
+        return $this->render('@App/companyAdmin/appraiseAdd.html.twig');
     }
 
     /**
@@ -182,14 +151,7 @@ class CompanyAdminController extends Controller
      */
     public function appraiseEditAction($manager, CompanyWorker $worker, Appraise $appraise)
     {
-        return $this->render(
-            '@App/companyAdmin/appraiseEdit.html.twig',
-            array(
-                'manager' => $manager,
-                'worker' => $worker,
-                'appraise' => $appraise
-            )
-        );
+        return $this->render('@App/companyAdmin/appraiseEdit.html.twig');
     }
 
     /**
@@ -203,13 +165,6 @@ class CompanyAdminController extends Controller
      */
     public function appraiseRemoveAction($manager, CompanyWorker $worker, Appraise $appraise)
     {
-        return $this->render(
-            '@App/companyAdmin/appraiseRemove.html.twig',
-            array(
-                'manager' => $manager,
-                'worker' => $worker,
-                'appraise' => $appraise
-            )
-        );
+        return $this->render('@App/companyAdmin/appraiseRemove.html.twig');
     }
 }
