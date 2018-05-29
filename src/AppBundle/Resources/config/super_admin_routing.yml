@@ -1,0 +1,19 @@
+app_super_admin_homepage:
+    path: /
+    defaults: {_controller: AppBundle:SuperAdmin:index}
+
+app_super_admin_company_list:
+    path: /company/list/{page}
+    defaults: {_controller: AppBundle:SuperAdmin:companyList}
+
+app_super_admin_company_add:
+    path: /company/add
+    defaults: {_controller: AppBundle:SuperAdmin:companyAdd}
+
+app_super_admin_company_edit:
+    path: /company/edit/{company}
+    defaults: {_controller: AppBundle:SuperAdmin:companyEdit}
+
+app_super_admin_company_remove:
+    path: /company/remove/{company}
+    defaults: {_controller: AppBundle:SuperAdmin:companyRemove}

@@ -1,3 +1,7 @@
 app_homepage:
     path:     /
     defaults: { _controller: AppBundle:App:index }
+
+app_super_admin:
+    prefix: /admin
+    resource: 'super_admin_routing.yml'
