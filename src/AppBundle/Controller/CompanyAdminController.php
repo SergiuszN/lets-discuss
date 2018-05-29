@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Appraise;
 use AppBundle\Entity\CompanyWorker;
+use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class CompanyAdminController extends Controller
@@ -42,11 +43,10 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin manager edit Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function managerEditAction($manager)
+    public function managerEditAction(User $manager)
     {
         return $this->render('@App/companyAdmin/managerEdit.html.twig');
     }
@@ -54,11 +54,10 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin manager remove Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function managerRemoveAction($manager)
+    public function managerRemoveAction(User $manager)
     {
         return $this->render('@App/companyAdmin/managerRemove.html.twig');
     }
@@ -66,12 +65,11 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin worker list Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @param int $page
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerListAction($manager, $page)
+    public function workerListAction(User $manager, $page)
     {
         return $this->render('@App/companyAdmin/workerList.html.twig', array('page' => $page));
     }
@@ -79,11 +77,10 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin worker add Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerAddAction($manager)
+    public function workerAddAction(User $manager)
     {
         return $this->render('@App/companyAdmin/workerAdd.html.twig');
     }
@@ -91,12 +88,11 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin worker edit Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @param CompanyWorker $worker
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerEditAction($manager, CompanyWorker $worker)
+    public function workerEditAction(User $manager, CompanyWorker $worker)
     {
         return $this->render('@App/companyAdmin/workerEdit.html.twig');
     }
@@ -104,11 +100,11 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin worker remove Action
      *
-     * @param $manager
+     * @param User $manager
      * @param CompanyWorker $worker
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerRemoveAction($manager, CompanyWorker $worker)
+    public function workerRemoveAction(User $manager, CompanyWorker $worker)
     {
         return $this->render( '@App/companyAdmin/workerRemove.html.twig');
     }
@@ -116,13 +112,12 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin appraise list Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @param CompanyWorker $worker
      * @param $page
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseListAction($manager, CompanyWorker $worker, $page)
+    public function appraiseListAction(User $manager, CompanyWorker $worker, $page)
     {
         return $this->render( '@App/companyAdmin/appraiseList.html.twig', array('page' => $page));
     }
@@ -130,12 +125,11 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin appraise add Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @param CompanyWorker $worker
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseAddAction($manager, CompanyWorker $worker)
+    public function appraiseAddAction(User $manager, CompanyWorker $worker)
     {
         return $this->render('@App/companyAdmin/appraiseAdd.html.twig');
     }
@@ -143,13 +137,12 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin appraise edit Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @param CompanyWorker $worker
      * @param Appraise $appraise
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseEditAction($manager, CompanyWorker $worker, Appraise $appraise)
+    public function appraiseEditAction(User $manager, CompanyWorker $worker, Appraise $appraise)
     {
         return $this->render('@App/companyAdmin/appraiseEdit.html.twig');
     }
@@ -157,13 +150,12 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin appraise remove Action
      *
-     * TODO PHP Doc oraz rzutowanie na Manager
-     * @param $manager
+     * @param User $manager
      * @param CompanyWorker $worker
      * @param Appraise $appraise
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseRemoveAction($manager, CompanyWorker $worker, Appraise $appraise)
+    public function appraiseRemoveAction(User $manager, CompanyWorker $worker, Appraise $appraise)
     {
         return $this->render('@App/companyAdmin/appraiseRemove.html.twig');
     }
