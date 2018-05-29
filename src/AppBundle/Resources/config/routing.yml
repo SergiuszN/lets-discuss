@@ -5,3 +5,7 @@ app_homepage:
 app_super_admin:
     prefix: /admin
     resource: 'super_admin_routing.yml'
+
+app_company_admin:
+    prefix: /company
+    resource: 'company_admin_routing.yml'
