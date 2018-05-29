@@ -13,7 +13,7 @@ class SuperAdminController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('@App/superAdmin/layout.html.twig');
+        return $this->render('@App/superAdmin/index.html.twig');
     }
 
     /**

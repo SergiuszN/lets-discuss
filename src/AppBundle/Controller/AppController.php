@@ -8,6 +8,6 @@ class AppController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('@App/layout.html.twig');
+        return $this->redirectToRoute('fos_user_security_login');
     }
 }

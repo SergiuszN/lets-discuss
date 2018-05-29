@@ -1,0 +1,27 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block body %}
+    {% include '@App/superAdmin/components/navbar.html.twig' %}
+    <ol class="breadcrumb">
+        <li class="active">Dashboard</li>
+    </ol>
+
+    <div class="page-header">
+        <h1>Dashboard <br class="visible-xs"><small>Here you can see general system statistics</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Companies statistic</h3>
+                </div>
+                <div class="panel-body">
+                    <div>Companies: <span class="label label-success">0</span></div>
+                    <div>Active: <span class="label label-info">0</span></div>
+                    <div>Disabled: <span class="label label-warning">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

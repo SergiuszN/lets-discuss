@@ -1,1 +1,6 @@
-Company {{ page }}
+{% extends '@App/layout.html.twig' %}
+
+{% block body %}
+    {% include '@App/superAdmin/components/navbar.html.twig' %}
+    <h1>Company list</h1>
+{% endblock %}
