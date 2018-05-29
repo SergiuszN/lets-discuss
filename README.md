@@ -23,3 +23,6 @@ NodeJs + NPM - https://nodejs.org/en/ polecam lts 8
 # Update:
 * composer install
 * php app/console doctrine:schema:update --dump-sql --force
+
+# Create super admin user: 
+php app/console userName user@mail.com userPassword --super-admin
