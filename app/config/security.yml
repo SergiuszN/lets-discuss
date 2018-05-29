@@ -3,8 +3,15 @@ security:
         FOS\UserBundle\Model\UserInterface: bcrypt
 
     role_hierarchy:
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
-        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN:
+            - ROLE_USER
+
+        ROLE_COMPANY_ADMIN:
+            - ROLE_COMPANY_MANAGER
+            - ROLE_USER
+
+        ROLE_COMPANY_MANAGER:
+            - ROLE_USER
 
     providers:
         fos_userbundle:
@@ -16,13 +23,15 @@ security:
             form_login:
                 provider: fos_userbundle
                 csrf_token_generator: security.csrf.token_manager
+                success_handler: authentication.handler.login_success_handler
 
             logout:       true
             anonymous:    true
 
     access_control:
+        - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/user/, role: ROLE_USER }
-        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/company, role: [ROLE_COMPANY_ADMIN, ROLE_COMPANY_MANAGER] }
+        - { path: ^/admin, role: ROLE_SUPER_ADMIN }
