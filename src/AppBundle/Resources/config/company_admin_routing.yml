@@ -1,0 +1,57 @@
+app_company_admin_homepage:
+    path: /
+    defaults: {_controller: AppBundle:CompanyAdmin:index}
+
+#MANAGER
+
+app_company_admin_manager_list:
+    path: /manager/list/{page}
+    defaults: {_controller: AppBundle:CompanyAdmin:managerList}
+
+app_company_admin_manager_add:
+    path: /manager/add
+    defaults: {_controller: AppBundle:CompanyAdmin:managerAdd}
+
+app_company_admin_manager_edit:
+    path: /manager/edit/{manager}
+    defaults: {_controller: AppBundle:CompanyAdmin:managerEdit}
+
+app_company_admin_manager_remove:
+    path: /manager/remove/{manager}
+    defaults: {_controller: AppBundle:CompanyAdmin:managerRemove}
+
+#WORKER
+
+app_company_admin_worker_list:
+    path: /manager/{manager}/worker/list/{page}
+    defaults: {_controller: AppBundle:CompanyAdmin:workerList}
+
+app_company_admin_worker_add:
+    path: /manager/{manager}/worker/add
+    defaults: {_controller: AppBundle:CompanyAdmin:workerAdd}
+
+app_company_admin_worker_edit:
+    path: /manager/{manager}/worker/edit/{worker}
+    defaults: {_controller: AppBundle:CompanyAdmin:workerEdit}
+
+app_company_admin_worker_remove:
+    path: /manager/{manager}/worker/remove/{worker}
+    defaults: {_controller: AppBundle:CompanyAdmin:workerRemove}
+
+#APPRAISE
+
+app_company_admin_appraise_list:
+    path: /manager/{manager}/worker/{worker}/appraise/list/{page}
+    defaults: {_controller: AppBundle:CompanyAdmin:appraiseList}
+
+app_company_admin_appraise_add:
+    path: /manager/{manager}/worker/{worker}/appraise/add
+    defaults: {_controller: AppBundle:CompanyAdmin:appraiseAdd}
+
+app_company_admin_appraise_edit:
+    path: /manager/{manager}/worker/{worker}/appraise/edit/{appraise}
+    defaults: {_controller: AppBundle:CompanyAdmin:appraiseEdit}
+
+app_company_admin_appraise_remove:
+    path: /manager/{manager}/worker/{worker}/appraise/remove/{appraise}
+    defaults: {_controller: AppBundle:CompanyAdmin:appraiseRemove}
