@@ -3,7 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Company;
+use AppBundle\Entity\User;
+use AppBundle\Form\CompanyForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class SuperAdminController extends Controller
 {
@@ -39,11 +42,63 @@ class SuperAdminController extends Controller
     /**
      * Super Admin company add Action
      *
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function companyAddAction()
+    public function companyAddAction(Request $request)
     {
-        return $this->render('@App/superAdmin/companyAdd.html.twig');
+        $form = $this->createForm(CompanyForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $data = $form->getData();
+            $temporaryPassword = substr(md5(random_bytes(10)), 0, 10);
+
+            $email = $data['email'];
+            $name = $data['username'];
+
+            $user = new User();
+            $user->addRole('ROLE_COMPANY_ADMIN');
+            $user->setPlainPassword($temporaryPassword);
+            $user->setEmail($email);
+            $user->setUsername($name);
+            $user->setEnabled(true);
+
+            $em->persist($user);
+            $em->flush();
+
+            $company = new Company();
+            $company->setName($data['name']);
+            $company->setDescription($data['description']);
+
+            $em->persist($company);
+            $em->flush();
+
+            $message = (new \Swift_Message('Registration Email'))
+                ->setFrom($this->getParameter('mailer_user'))
+                ->setTo($email)
+                ->setBody(
+                    $this->renderView(
+                        '@App/superAdmin/emails/createCompanyAdmin.html.twig',
+                        [
+                            'name' => $name,
+                            'email' => $email,
+                            'password' => $temporaryPassword
+                        ]
+                    ),
+                    'text/html'
+                );
+
+            $this->get('mailer')->send($message);
+
+            return $this->redirectToRoute('app_super_admin_company_list');
+        }
+
+        return $this->render('@App/superAdmin/companyAdd.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 
     /**
