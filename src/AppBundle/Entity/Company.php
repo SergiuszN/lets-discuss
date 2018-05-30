@@ -46,6 +46,14 @@ class Company
      */
     private $workers;
 
+    /**
+     * @var User | ArrayCollection
+     *
+     * One Company many User
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\User", mappedBy="company")
+     */
+    private $managers;
+
     /*******************************/
 
     /**
@@ -81,6 +89,14 @@ class Company
     }
 
     /**
+     * @return User | ArrayCollection
+     */
+    public function getManagers()
+    {
+        return $this->managers;
+    }
+
+    /**
      * @param string $name
      */
     public function setName($name)
@@ -104,5 +120,15 @@ class Company
     public function addWorker($worker)
     {
         $this->workers[] = $worker;
+    }
+
+    /**
+     * Add Manager to Company
+     *
+     * @param User $manager
+     */
+    public function addManager($manager)
+    {
+        $this->managers[] = $manager;
     }
 }
