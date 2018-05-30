@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Appraise;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -16,7 +17,11 @@ class CompanyAdminController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('@App/companyAdmin/index.html.twig');
+        $company = $this->getCompany();
+
+        return $this->render('@App/companyAdmin/index.html.twig', [
+            'company' => $company
+        ]);
     }
 
     /**
@@ -158,5 +163,20 @@ class CompanyAdminController extends Controller
     public function appraiseRemoveAction(User $manager, CompanyWorker $worker, Appraise $appraise)
     {
         return $this->render('@App/companyAdmin/appraiseRemove.html.twig');
+    }
+
+    /**
+     * Function return company object for current user
+     *
+     * @param int $mockUp
+     * @return Company
+     */
+    private function getCompany($mockUp = 5)
+    {
+        //TODO: change this mock up to $this->getUser()->getCompany()
+        return $this
+            ->getDoctrine()
+            ->getRepository(Company::class)
+            ->find($mockUp);
     }
 }

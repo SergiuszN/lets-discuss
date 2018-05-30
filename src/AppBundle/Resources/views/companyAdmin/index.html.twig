@@ -1,1 +1,39 @@
-Company Admin homepage
+{% extends '@App/layout.html.twig' %}
+
+{% block body %}
+    {% include '@App/companyAdmin/components/navbar.html.twig' %}
+    <ol class="breadcrumb">
+        <li class="active">Dashboard</li>
+    </ol>
+
+    <div class="page-header">
+        <h1>Dashboard <br class="visible-xs"><small>Here you can see general system statistics</small></h1>
+    </div>
+
+    <div class="row">
+        {% if is_granted('ROLE_COMPANY_ADMIN') %}
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Widget for company admin</h3>
+                </div>
+                <div class="panel-body">
+                    Test Content
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if is_granted('ROLE_COMPANY_MANAGER') %}
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Widget for company manager</h3>
+                    </div>
+                    <div class="panel-body">
+                        Test Content
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
