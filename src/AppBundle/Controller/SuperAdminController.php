@@ -59,21 +59,22 @@ class SuperAdminController extends Controller
             $email = $data['email'];
             $name = $data['username'];
 
+            $company = new Company();
+            $company->setName($data['name']);
+            $company->setDescription($data['description']);
+
+            $em->persist($company);
+            $em->flush();
+
             $user = new User();
             $user->addRole('ROLE_COMPANY_ADMIN');
             $user->setPlainPassword($temporaryPassword);
             $user->setEmail($email);
             $user->setUsername($name);
             $user->setEnabled(true);
+            $user->setCompany($company);
 
             $em->persist($user);
-            $em->flush();
-
-            $company = new Company();
-            $company->setName($data['name']);
-            $company->setDescription($data['description']);
-
-            $em->persist($company);
             $em->flush();
 
             $message = (new \Swift_Message('Registration Email'))

@@ -73,8 +73,7 @@ class CompanyAdminController extends Controller
             $user->setEmail($data['email']);
             $user->setUsername($data['username']);
             $user->setEnabled(true);
-
-            //TODO: Add user to company
+            $user->setCompany($company);
 
             $em->persist($user);
             $em->flush();
@@ -256,15 +255,12 @@ class CompanyAdminController extends Controller
     /**
      * Function return company object for current user
      *
-     * @param int $mockUp
      * @return Company
      */
-    private function getCompany($mockUp = 5)
+    private function getCompany()
     {
-        //TODO: change this mock up to $this->getUser()->getCompany()
         return $this
-            ->getDoctrine()
-            ->getRepository(Company::class)
-            ->find($mockUp);
+            ->getUser()
+            ->getCompany();
     }
 }
