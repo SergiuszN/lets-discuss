@@ -33,5 +33,6 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: ROLE_DISABLED }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/company/manager, role: ROLE_COMPANY_ADMIN }
         - { path: ^/company, role: [ROLE_COMPANY_ADMIN, ROLE_COMPANY_MANAGER] }
         - { path: ^/admin, role: ROLE_SUPER_ADMIN }

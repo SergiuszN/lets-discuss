@@ -1,1 +1,50 @@
-Manager List {{ page }}
+{% extends '@App/layout.html.twig' %}
+
+{% block body %}
+    {% include '@App/companyAdmin/components/navbar.html.twig' %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('app_company_admin_homepage') }}">Dashboard</a></li>
+        <li class="active">Manager List</li>
+    </ol>
+
+    <div class="page-header">
+        <h1>Manager Lists <br class="visible-xs"><small>Here you can see all added managers</small></h1>
+    </div>
+
+    <div class="text-right">
+        <a class="btn btn-default" href="{{ path('app_company_admin_manager_add') }}"> <i class="fa fa-plus-circle" aria-hidden="true"></i> Create New</a>
+    </div>
+
+    <div class="table-responsive" style="margin-top: 15px;">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if pagination.getTotalItemCount == 0 %}
+                <tr>
+                    <td colspan="8" class="text-center"><h4>There is no a managers</h4></td>
+                </tr>
+            {% endif %}
+            {% for manager in pagination %}
+                <tr>
+                    <td>{{ manager.id }}</td>
+                    <td>{{ manager.username }}</td>
+                    <td>
+                        <a href="{{ path('app_company_admin_manager_edit', {manager: manager.id}) }}" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</a>
+                        <a href="{{ path('app_company_admin_manager_remove', {manager: manager.id}) }}" class="btn btn-xs btn-danger"><span class="fa fa-trash"></span> Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}
