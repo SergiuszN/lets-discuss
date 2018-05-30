@@ -17,3 +17,4 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
     super_admin_list_per_page: 10
+    company_admin_list_per_page: 10

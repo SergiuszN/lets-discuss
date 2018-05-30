@@ -6,7 +6,9 @@ app_company_admin_homepage:
 
 app_company_admin_manager_list:
     path: /manager/list/{page}
-    defaults: {_controller: AppBundle:CompanyAdmin:managerList}
+    defaults: {_controller: AppBundle:CompanyAdmin:managerList, page: 1}
+    requirements:
+        page: \d+
 
 app_company_admin_manager_add:
     path: /manager/add
@@ -15,43 +17,73 @@ app_company_admin_manager_add:
 app_company_admin_manager_edit:
     path: /manager/edit/{manager}
     defaults: {_controller: AppBundle:CompanyAdmin:managerEdit}
+    requirements:
+        manager: \d+
 
 app_company_admin_manager_remove:
     path: /manager/remove/{manager}
     defaults: {_controller: AppBundle:CompanyAdmin:managerRemove}
+    requirements:
+        manager: \d+
 
 #WORKER
 
 app_company_admin_worker_list:
     path: /manager/{manager}/worker/list/{page}
-    defaults: {_controller: AppBundle:CompanyAdmin:workerList}
+    defaults: {_controller: AppBundle:CompanyAdmin:workerList, page: 1}
+    requirements:
+        manager: \d+
+        page: \d+
 
 app_company_admin_worker_add:
     path: /manager/{manager}/worker/add
     defaults: {_controller: AppBundle:CompanyAdmin:workerAdd}
+    requirements:
+        manager: \d+
 
 app_company_admin_worker_edit:
     path: /manager/{manager}/worker/edit/{worker}
     defaults: {_controller: AppBundle:CompanyAdmin:workerEdit}
+    requirements:
+        manager: \d+
+        worker: \d+
 
 app_company_admin_worker_remove:
     path: /manager/{manager}/worker/remove/{worker}
     defaults: {_controller: AppBundle:CompanyAdmin:workerRemove}
+    requirements:
+        manager: \d+
+        worker: \d+
 
 #APPRAISE
 
 app_company_admin_appraise_list:
     path: /manager/{manager}/worker/{worker}/appraise/list/{page}
-    defaults: {_controller: AppBundle:CompanyAdmin:appraiseList}
+    defaults: {_controller: AppBundle:CompanyAdmin:appraiseList, page: 1}
+    requirements:
+        manager: \d+
+        worker: \d+
+        page: \d+
 
 app_company_admin_appraise_add:
     path: /manager/{manager}/worker/{worker}/appraise/add
     defaults: {_controller: AppBundle:CompanyAdmin:appraiseAdd}
+    requirements:
+        manager: \d+
+        worker: \d+
 
 app_company_admin_appraise_edit:
     path: /manager/{manager}/worker/{worker}/appraise/edit/{appraise}
     defaults: {_controller: AppBundle:CompanyAdmin:appraiseEdit}
+    requirements:
+        manager: \d+
+        worker: \d+
+        appraise: \d+
 
 app_company_admin_appraise_remove:
     path: /manager/{manager}/worker/{worker}/appraise/remove/{appraise}
     defaults: {_controller: AppBundle:CompanyAdmin:appraiseRemove}
+    requirements:
+        manager: \d+
+        worker: \d+
+        appraise: \d+
