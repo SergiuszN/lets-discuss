@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
+use AppBundle\Form\CompanyEditForm;
 use AppBundle\Form\CompanyForm;
 use Doctrine\DBAL\ConnectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -107,12 +108,26 @@ class SuperAdminController extends Controller
     /**
      * Super Admin company edit Action
      *
-     * @param int $company
+     * @param Request $request
+     * @param Company $company
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function companyEditAction($company)
+    public function companyEditAction(Request $request, Company $company)
     {
-        return $this->render('@App/superAdmin/companyEdit.html.twig', array('company' => $company));
+        $form = $this->createForm(CompanyEditForm::class, $company);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $editedCompany = $form->getData();
+            $em->persist($editedCompany);
+            $em->flush();
+
+            return $this->redirectToRoute('app_super_admin_company_list');
+        }
+
+        return $this->render('@App/superAdmin/companyEdit.html.twig', array('form' => $form->createView()));
     }
 
     /**
@@ -131,19 +146,15 @@ class SuperAdminController extends Controller
             /** @var User $manager */
             foreach ($company->getManagers() as $manager) {
                 $em->remove($manager);
-                $em->flush();
             }
 
             /** @var CompanyWorker $worker */
-            foreach ($company->getWorkers() as $worker)
-            {
+            foreach ($company->getWorkers() as $worker) {
                 $em->remove($worker);
-                $em->flush();
             }
 
             $em->remove($company);
             $em->flush();
-
             $em->getConnection()->commit();
         } catch (\Exception $e) {
             $em->getConnection()->rollBack();
