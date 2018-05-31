@@ -21,10 +21,13 @@ class UserRepository extends EntityRepository
      */
     public function getCompanyManagersQuery(Company $company)
     {
-        // TODO: add select by company
         return $this->createQueryBuilder('u')
-            ->andWhere('u.roles LIKE :role')
-            ->setParameter('role', '%"ROLE_COMPANY_MANAGER"%')
+            ->where('u.roles LIKE :role')
+            ->andWhere('u.company = :company')
+            ->setParameters([
+                'role' => '%"ROLE_COMPANY_MANAGER"%',
+                'company' => $company->getId()
+            ])
             ->addOrderBy('u.id', 'DESC')
             ->getQuery();
     }

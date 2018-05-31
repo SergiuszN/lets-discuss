@@ -3,8 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Company;
+use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
 use AppBundle\Form\CompanyForm;
+use Doctrine\DBAL\ConnectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -116,11 +118,37 @@ class SuperAdminController extends Controller
     /**
      * Super Admin company remove Action
      *
-     * @param int $company
+     * @param Company $company
      * @return \Symfony\Component\HttpFoundation\Response
+     * @throws ConnectionException
      */
-    public function companyRemoveAction($company)
+    public function companyRemoveAction(Company $company)
     {
-        return $this->render('@App/superAdmin/companyRemove.html.twig', array('company' => $company));
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->getConnection()->beginTransaction();
+
+        try {
+            /** @var User $manager */
+            foreach ($company->getManagers() as $manager) {
+                $em->remove($manager);
+                $em->flush();
+            }
+
+            /** @var CompanyWorker $worker */
+            foreach ($company->getWorkers() as $worker)
+            {
+                $em->remove($worker);
+                $em->flush();
+            }
+
+            $em->remove($company);
+            $em->flush();
+
+            $em->getConnection()->commit();
+        } catch (\Exception $e) {
+            $em->getConnection()->rollBack();
+        }
+
+        return $this->redirectToRoute('app_super_admin_company_list');
     }
 }
