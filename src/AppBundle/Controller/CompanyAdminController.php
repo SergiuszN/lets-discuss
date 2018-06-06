@@ -7,6 +7,7 @@ use AppBundle\Entity\Company;
 use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
 use AppBundle\Form\CompanyManagerForm;
+use AppBundle\Form\CompanyWorkerForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -172,9 +173,31 @@ class CompanyAdminController extends Controller
      * @param User $manager
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerAddAction(User $manager)
+    public function workerAddAction(Request $request, User $manager)
     {
-        return $this->render('@App/companyAdmin/workerAdd.html.twig');
+        $company = $this->getCompany();
+        $form = $this->createForm(CompanyWorkerForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $data = $form->getData();
+
+            $companyWorker = new CompanyWorker();
+            $companyWorker->setName($data['name']);
+            $companyWorker->setSurname($data['surname']);
+            $companyWorker->setCompany($company);
+
+            $em->persist($companyWorker);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_worker_list', ['manager' => $manager->getId()]);
+        }
+
+        return $this->render('@App/companyAdmin/workerAdd.html.twig', [
+            'company' => $company,
+            'form' => $form->createView()
+        ]);
     }
 
     /**
