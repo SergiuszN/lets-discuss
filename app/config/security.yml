@@ -33,7 +33,6 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: ROLE_DISABLED }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-#        TODO Sprawdzenie czy na pewno tylko company admin ma mieć dostęp
         - { path: ^/company/manager, role: [ROLE_COMPANY_ADMIN, ROLE_COMPANY_MANAGER] }
         - { path: ^/company, role: [ROLE_COMPANY_ADMIN, ROLE_COMPANY_MANAGER] }
         - { path: ^/admin, role: ROLE_SUPER_ADMIN }
