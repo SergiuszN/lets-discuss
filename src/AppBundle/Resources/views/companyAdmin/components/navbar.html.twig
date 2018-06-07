@@ -14,6 +14,8 @@
                 <li {% if app.request.attributes.get('_route') starts with 'app_company_admin_homepage' %}class="active"{% endif %}><a href="{{ path('app_company_admin_homepage') }}">Home</a></li>
                 {% if is_granted('ROLE_COMPANY_ADMIN') %}
                     <li {% if app.request.attributes.get('_route') starts with 'app_company_admin_manager' %}class="active"{% endif %}><a href="{{ path('app_company_admin_manager_list') }}">Managers</a></li>
+                {% elseif is_granted('ROLE_COMPANY_MANAGER') %}
+                    <li {% if app.request.attributes.get('_route') starts with 'app_company_admin_worker' %}class="active"{% endif %}><a href="{{ path('app_company_admin_worker_list', {'manager': app.user.id}) }}">Workers</a></li>
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">

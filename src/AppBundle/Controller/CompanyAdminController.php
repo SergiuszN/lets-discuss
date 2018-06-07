@@ -163,7 +163,18 @@ class CompanyAdminController extends Controller
      */
     public function workerListAction(User $manager, $page)
     {
-        return $this->render('@App/companyAdmin/workerList.html.twig', array('page' => $page));
+        $company = $this->getCompany();
+
+        $pagination = $this->get('knp_paginator')->paginate(
+            $company->getWorkers(),
+            $page,
+            $this->getParameter('company_admin_list_per_page')
+        );
+
+        return $this->render('@App/companyAdmin/workerList.html.twig', [
+            'company' => $company,
+            'pagination' => $pagination
+        ]);
     }
 
     /**
