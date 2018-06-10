@@ -232,7 +232,11 @@ class CompanyAdminController extends Controller
      */
     public function workerRemoveAction(User $manager, CompanyWorker $worker)
     {
-        return $this->render( '@App/companyAdmin/workerRemove.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($worker);
+        $em->flush();
+
+        return $this->redirectToRoute('app_company_admin_worker_list', ['manager' => $manager->getId()]);
     }
 
     /**
