@@ -214,13 +214,31 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin worker edit Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerEditAction(User $manager, CompanyWorker $worker)
+    public function workerEditAction(Request $request, User $manager, CompanyWorker $worker)
     {
-        return $this->render('@App/companyAdmin/workerEdit.html.twig');
+        $form = $this->createForm(CompanyWorkerForm::class, $worker);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $editedWorker = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($editedWorker);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_worker_list', ['manager' => $manager->getId()]);
+        }
+
+        return $this->render('@App/companyAdmin/workerEdit.html.twig', [
+            'form' => $form->createView(),
+            'company' => $this->getCompany()
+        ]);
     }
 
     /**
