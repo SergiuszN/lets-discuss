@@ -70,7 +70,7 @@ class CompanyAdminController extends Controller
             $email = $em->getRepository(User::class)->findBy(array('email'=>$data['email']));
 
             if(!empty($email)){
-                echo "Error: Email already exists";
+                $this->addFlash('danger', 'Email adress already exists. Try another email.');
             }else{
                 $temporaryPassword = substr(md5(random_bytes(10)), 0, 10);
 
