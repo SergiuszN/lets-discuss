@@ -4,11 +4,12 @@
     {% include '@App/companyAdmin/components/navbar.html.twig' %}
     <ol class="breadcrumb">
         <li><a href="{{ path('app_company_admin_homepage') }}">Dashboard</a></li>
-        <li class="active">Worker List</li>
+        <li><a href="{{ path('app_company_admin_worker_list', {'manager': app.user.id}) }}">Worker List</a></li>
+        <li class="active">Appraise List</li>
     </ol>
 
     <div class="page-header">
-        <h1>Apprasials Lists <br class="visible-xs"><small>Here you can see all added apprasials</small></h1>
+        <h1>Appraise Lists <br class="visible-xs"><small>Here you can see all added appraisals</small></h1>
     </div>
 
     <div class="text-right">
@@ -29,7 +30,7 @@
             <tbody>
             {% if pagination.getTotalItemCount == 0 %}
                 <tr>
-                    <td colspan="8" class="text-center"><h4>There is no workers</h4></td>
+                    <td colspan="8" class="text-center"><h4>There is no apprasials</h4></td>
                 </tr>
             {% endif %}
             {% for appraise in pagination %}

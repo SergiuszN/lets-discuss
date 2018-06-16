@@ -252,10 +252,18 @@ class CompanyAdminController extends Controller
     public function workerRemoveAction(User $manager, CompanyWorker $worker)
     {
         $em = $this->getDoctrine()->getManager();
+
+        /** @var Appraise $appraise */
+        foreach ($worker->getAppraisals() as $appraise) {
+            $em->remove($appraise);
+        }
+
         $em->remove($worker);
         $em->flush();
 
-        return $this->redirectToRoute('app_company_admin_worker_list', ['manager' => $manager->getId()]);
+        return $this->redirectToRoute('app_company_admin_worker_list', [
+            'manager' => $manager->getId()
+        ]);
     }
 
     /**
@@ -343,7 +351,14 @@ class CompanyAdminController extends Controller
      */
     public function appraiseRemoveAction(User $manager, CompanyWorker $worker, Appraise $appraise)
     {
-        return $this->render('@App/companyAdmin/appraiseRemove.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($appraise);
+        $em->flush();
+
+        return $this->redirectToRoute('app_company_admin_appraise_list', [
+           'worker' => $worker->getId(),
+           'manager' => $manager->getId(),
+        ]);
     }
 
     /**

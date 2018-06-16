@@ -26,7 +26,7 @@ class AppraiseForm extends AbstractType
                 )
             ))
             ->add('description', TextareaType::class, array('required' => false, 'label' => 'Description'))
-            ->add('save', SubmitType::class, array('label' => 'Add rate'));
+            ->add('save', SubmitType::class, array('label' => 'Add appraise'));
     }
 
     public function configureOptions(OptionsResolver $resolver)
