@@ -6,6 +6,7 @@ use AppBundle\Entity\Appraise;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
+use AppBundle\Form\AppraiseForm;
 use AppBundle\Form\CompanyManagerForm;
 use AppBundle\Form\CompanyWorkerForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -273,13 +274,39 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin appraise add Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseAddAction(User $manager, CompanyWorker $worker)
+    public function appraiseAddAction(Request $request, User $manager, CompanyWorker $worker)
     {
-        return $this->render('@App/companyAdmin/appraiseAdd.html.twig');
+        $form = $this->createForm(AppraiseForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+
+            $appraise = new Appraise();
+            $appraise->setRate($data['rate']);
+            $appraise->setDescription($data['description']);
+            $appraise->setDate(new \DateTime());
+            $appraise->setCompanyWorker($worker);
+
+            $em->persist($appraise);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_worker_list', [
+                'manager' => $manager->getId()
+            ]);
+        }
+
+        return $this->render('@App/companyAdmin/appraiseAdd.html.twig', [
+            'company' => $this->getCompany(),
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
