@@ -2,6 +2,8 @@
 
 {% block body %}
     {% include '@App/companyAdmin/components/navbar.html.twig' %}
+    {% include '@App/companyAdmin/components/flashMessages.html.twig' %}
+
     <ol class="breadcrumb">
         <li><a href="{{ path('app_company_admin_homepage') }}">Dashboard</a></li>
         <li><a href="{{ path('app_company_admin_manager_list') }}">Manager List</a></li>

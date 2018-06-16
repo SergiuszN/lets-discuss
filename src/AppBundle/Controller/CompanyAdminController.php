@@ -63,41 +63,49 @@ class CompanyAdminController extends Controller
         $form = $this->createForm(CompanyManagerForm::class);
         $form->handleRequest($request);
 
+
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-
             $data = $form->getData();
-            $temporaryPassword = substr(md5(random_bytes(10)), 0, 10);
+            $email = $em->getRepository(User::class)->findBy(array('email'=>$data['email']));
 
-            $user = new User();
-            $user->addRole('ROLE_COMPANY_MANAGER');
-            $user->setPlainPassword($temporaryPassword);
-            $user->setEmail($data['email']);
-            $user->setUsername($data['username']);
-            $user->setEnabled(true);
-            $user->setCompany($company);
+            if(!empty($email)){
+                $this->addFlash('danger', 'Email adress already exists. Try another email.');
+            }else{
+                $temporaryPassword = substr(md5(random_bytes(10)), 0, 10);
 
-            $em->persist($user);
-            $em->flush();
+                $user = new User();
+                $user->addRole('ROLE_COMPANY_MANAGER');
+                $user->setPlainPassword($temporaryPassword);
+                $user->setEmail($data['email']);
+                $user->setUsername($data['username']);
+                $user->setEnabled(true);
+                $user->setCompany($company);
 
-            $message = (new \Swift_Message('Registration Email'))
-                ->setFrom($this->getParameter('mailer_user'))
-                ->setTo($data['email'])
-                ->setBody(
-                    $this->renderView(
-                        '@App/companyAdmin/emails/createCompanyManager.html.twig',
-                        [
-                            'company' => $company,
-                            'name' => $data['username'],
-                            'password' => $temporaryPassword
-                        ]
-                    ),
-                    'text/html'
-                );
+                $em->persist($user);
+                $em->flush();
 
-            $this->get('mailer')->send($message);
+                $message = (new \Swift_Message('Registration Email'))
+                    ->setFrom($this->getParameter('mailer_user'))
+                    ->setTo($data['email'])
+                    ->setBody(
+                        $this->renderView(
+                            '@App/companyAdmin/emails/createCompanyManager.html.twig',
+                            [
+                                'company' => $company,
+                                'name' => $data['username'],
+                                'password' => $temporaryPassword
+                            ]
+                        ),
+                        'text/html'
+                    );
 
-            return $this->redirectToRoute('app_company_admin_manager_list');
+                $this->get('mailer')->send($message);
+
+                return $this->redirectToRoute('app_company_admin_manager_list');
+            }
+
         }
 
         return $this->render('@App/companyAdmin/managerAdd.html.twig', [
