@@ -2,17 +2,7 @@
 
 {% block body %}
     {% include '@App/companyAdmin/components/navbar.html.twig' %}
-
-    {% for type, flash_messages in app.session.flashBag.all %}
-        {% for flash_message in flash_messages %}
-
-            <div class="alert alert-{{ type }} alert-dismissible fade in">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <strong>{{ flash_message }}</strong>
-            </div>
-
-        {% endfor %}
-    {% endfor %}
+    {% include '@App/companyAdmin/components/flashMessages.html.twig' %}
 
     <ol class="breadcrumb">
         <li><a href="{{ path('app_company_admin_homepage') }}">Dashboard</a></li>
