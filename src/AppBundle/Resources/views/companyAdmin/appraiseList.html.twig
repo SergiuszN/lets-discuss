@@ -1,1 +1,55 @@
-Appraise List
+{% extends '@App/layout.html.twig' %}
+
+{% block body %}
+    {% include '@App/companyAdmin/components/navbar.html.twig' %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('app_company_admin_homepage') }}">Dashboard</a></li>
+        <li><a href="{{ path('app_company_admin_worker_list', {'manager': app.user.id}) }}">Worker List</a></li>
+        <li class="active">Appraise List</li>
+    </ol>
+
+    <div class="page-header">
+        <h1>Appraise Lists <br class="visible-xs"><small>Here you can see all added appraisals</small></h1>
+    </div>
+
+    <div class="text-right">
+        <a class="btn btn-default" href="{{ path('app_company_admin_appraise_add', {'manager': app.user.id, 'worker': worker.id}) }}"> <i class="fa fa-plus-circle" aria-hidden="true"></i> Create New</a>
+    </div>
+
+    <div class="table-responsive" style="margin-top: 15px;">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Rate</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if pagination.getTotalItemCount == 0 %}
+                <tr>
+                    <td colspan="8" class="text-center"><h4>There is no apprasials</h4></td>
+                </tr>
+            {% endif %}
+            {% for appraise in pagination %}
+                <tr>
+                    <td>{{ appraise.id }}</td>
+                    <td>{{ appraise.rate }}</td>
+                    <td>{{ appraise.description }}</td>
+                    <td>{{ appraise.date | date('Y-m-d H:i:s') }}</td>
+                    <td>
+                        <a href="{{ path('app_company_admin_appraise_edit', {'manager': app.user.id, 'worker': worker.id, 'appraise': appraise.id}) }}" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</a>
+                        <a href="{{ path('app_company_admin_appraise_remove', {'manager': app.user.id, 'worker': worker.id, 'appraise': appraise.id}) }}" class="btn btn-xs btn-danger"><span class="fa fa-trash"></span> Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

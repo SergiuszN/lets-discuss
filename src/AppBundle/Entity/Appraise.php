@@ -16,7 +16,7 @@ class Appraise
     /**
      * @var int
      *
-     * @ORM\Column(name="in", type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -32,7 +32,7 @@ class Appraise
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="text", nullable=false)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 

@@ -150,6 +150,10 @@ class SuperAdminController extends Controller
 
             /** @var CompanyWorker $worker */
             foreach ($company->getWorkers() as $worker) {
+                foreach ($worker->getAppraisals() as $appraise) {
+                    $em->remove($appraise);
+                }
+
                 $em->remove($worker);
             }
 
