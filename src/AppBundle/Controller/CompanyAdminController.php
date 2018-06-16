@@ -268,7 +268,17 @@ class CompanyAdminController extends Controller
      */
     public function appraiseListAction(User $manager, CompanyWorker $worker, $page)
     {
-        return $this->render( '@App/companyAdmin/appraiseList.html.twig', array('page' => $page));
+        $pagination = $this->get('knp_paginator')->paginate(
+            $worker->getAppraisals(),
+            $page,
+            $this->getParameter('company_admin_list_per_page')
+        );
+
+        return $this->render( '@App/companyAdmin/appraiseList.html.twig', [
+            'pagination' => $pagination,
+            'worker' => $worker,
+            'company' => $this->getCompany()
+        ]);
     }
 
     /**
@@ -298,8 +308,9 @@ class CompanyAdminController extends Controller
             $em->persist($appraise);
             $em->flush();
 
-            return $this->redirectToRoute('app_company_admin_worker_list', [
-                'manager' => $manager->getId()
+            return $this->redirectToRoute('app_company_admin_appraise_list', [
+                'manager' => $manager->getId(),
+                'worker' => $worker->getId(),
             ]);
         }
 

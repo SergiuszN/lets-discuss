@@ -37,7 +37,7 @@
                     <td>{{ worker.name }}</td>
                     <td>{{ worker.surname }}</td>
                     <td>
-                        <a href="{{ path('app_company_admin_appraise_add', {'manager': app.user.id, 'worker': worker.id}) }}" class="btn btn-xs btn-success">Rate</a>
+                        <a href="{{ path('app_company_admin_appraise_list', {'manager': app.user.id, 'worker': worker.id}) }}" class="btn btn-xs btn-success">Rate</a>
                         <a href="{{ path('app_company_admin_worker_edit', {'manager': app.user.id, worker: worker.id}) }}" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</a>
                         <a href="{{ path('app_company_admin_worker_remove', {'manager': app.user.id, worker: worker.id}) }}" class="btn btn-xs btn-danger"><span class="fa fa-trash"></span> Delete</a>
                     </td>
