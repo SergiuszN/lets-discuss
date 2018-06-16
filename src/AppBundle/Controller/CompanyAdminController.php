@@ -331,14 +331,37 @@ class CompanyAdminController extends Controller
     /**
      * Company Admin appraise edit Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
-     * @param Appraise $appraise
+     * @param Appraise      $appraise
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseEditAction(User $manager, CompanyWorker $worker, Appraise $appraise)
+    public function appraiseEditAction(Request $request, User $manager, CompanyWorker $worker, Appraise $appraise)
     {
-        return $this->render('@App/companyAdmin/appraiseEdit.html.twig');
+        $form = $this->createForm(AppraiseForm::class, $appraise);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $editedAppraise = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($editedAppraise);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_appraise_list', [
+                'worker' => $worker->getId(),
+                'manager' => $manager->getId(),
+            ]);
+        }
+
+        return $this->render('@App/companyAdmin/appraiseEdit.html.twig', [
+            'form' => $form->createView(),
+            'company' => $this->getCompany(),
+            'manager' => $manager,
+            'worker' => $worker,
+        ]);
     }
 
     /**
