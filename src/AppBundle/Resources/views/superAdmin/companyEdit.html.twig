@@ -1,1 +1,16 @@
-Company Edit {{ company }}
+{% extends '@App/layout.html.twig' %}
+
+{% block body %}
+    {% include '@App/superAdmin/components/navbar.html.twig' %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('app_super_admin_homepage') }}">Dashboard</a></li>
+        <li><a href="{{ path('app_super_admin_company_list') }}">Company List</a></li>
+        <li class="active">Company Edit</li>
+    </ol>
+
+    <div class="page-header">
+        <h1>Company Edit <br class="visible-xs"><small>Edit company</small></h1>
+    </div>
+
+    {{ form(form) }}
+{% endblock %}

@@ -1,0 +1,4 @@
+track:
+    folders: ['app/config', 'src']
+    files: ['app/AppKernel.php', 'web/app.php']
+tmp: 'saved'

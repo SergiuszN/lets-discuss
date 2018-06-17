@@ -3,8 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Company;
+use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
+use AppBundle\Form\CompanyEditForm;
 use AppBundle\Form\CompanyForm;
+use Doctrine\DBAL\ConnectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -59,21 +62,22 @@ class SuperAdminController extends Controller
             $email = $data['email'];
             $name = $data['username'];
 
+            $company = new Company();
+            $company->setName($data['name']);
+            $company->setDescription($data['description']);
+
+            $em->persist($company);
+            $em->flush();
+
             $user = new User();
             $user->addRole('ROLE_COMPANY_ADMIN');
             $user->setPlainPassword($temporaryPassword);
             $user->setEmail($email);
             $user->setUsername($name);
             $user->setEnabled(true);
+            $user->setCompany($company);
 
             $em->persist($user);
-            $em->flush();
-
-            $company = new Company();
-            $company->setName($data['name']);
-            $company->setDescription($data['description']);
-
-            $em->persist($company);
             $em->flush();
 
             $message = (new \Swift_Message('Registration Email'))
@@ -104,22 +108,62 @@ class SuperAdminController extends Controller
     /**
      * Super Admin company edit Action
      *
-     * @param int $company
+     * @param Request $request
+     * @param Company $company
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function companyEditAction($company)
+    public function companyEditAction(Request $request, Company $company)
     {
-        return $this->render('@App/superAdmin/companyEdit.html.twig', array('company' => $company));
+        $form = $this->createForm(CompanyEditForm::class, $company);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $editedCompany = $form->getData();
+            $em->persist($editedCompany);
+            $em->flush();
+
+            return $this->redirectToRoute('app_super_admin_company_list');
+        }
+
+        return $this->render('@App/superAdmin/companyEdit.html.twig', array('form' => $form->createView()));
     }
 
     /**
      * Super Admin company remove Action
      *
-     * @param int $company
+     * @param Company $company
      * @return \Symfony\Component\HttpFoundation\Response
+     * @throws ConnectionException
      */
-    public function companyRemoveAction($company)
+    public function companyRemoveAction(Company $company)
     {
-        return $this->render('@App/superAdmin/companyRemove.html.twig', array('company' => $company));
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->getConnection()->beginTransaction();
+
+        try {
+            /** @var User $manager */
+            foreach ($company->getManagers() as $manager) {
+                $em->remove($manager);
+            }
+
+            /** @var CompanyWorker $worker */
+            foreach ($company->getWorkers() as $worker) {
+                foreach ($worker->getAppraisals() as $appraise) {
+                    $em->remove($appraise);
+                }
+
+                $em->remove($worker);
+            }
+
+            $em->remove($company);
+            $em->flush();
+            $em->getConnection()->commit();
+        } catch (\Exception $e) {
+            $em->getConnection()->rollBack();
+        }
+
+        return $this->redirectToRoute('app_super_admin_company_list');
     }
 }

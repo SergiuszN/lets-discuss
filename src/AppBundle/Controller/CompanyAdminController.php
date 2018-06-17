@@ -6,7 +6,11 @@ use AppBundle\Entity\Appraise;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
+use AppBundle\Form\AppraiseForm;
+use AppBundle\Form\CompanyManagerForm;
+use AppBundle\Form\CompanyWorkerForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class CompanyAdminController extends Controller
 {
@@ -32,28 +36,114 @@ class CompanyAdminController extends Controller
      */
     public function managerListAction($page)
     {
-        return $this->render('@App/companyAdmin/managerList.html.twig', array('page' => $page));
+        $company = $this->getCompany();
+
+        $pagination = $this->get('knp_paginator')->paginate(
+            $this->getDoctrine()->getRepository(User::class)->getCompanyManagersQuery($company),
+            $page,
+            $this->getParameter('super_admin_list_per_page')
+        );
+
+        return $this->render('@App/companyAdmin/managerList.html.twig', [
+            'company' => $company,
+            'pagination' => $pagination
+        ]);
     }
 
     /**
      * Company Admin manager add Action
      *
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function managerAddAction()
+    public function managerAddAction(Request $request)
     {
-        return $this->render('@App/companyAdmin/managerAdd.html.twig');
+        $company = $this->getCompany();
+
+        $form = $this->createForm(CompanyManagerForm::class);
+        $form->handleRequest($request);
+
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $data = $form->getData();
+            $email = $em->getRepository(User::class)->findBy(array('email'=>$data['email']));
+
+            if(!empty($email)){
+                $this->addFlash('danger', 'Email adress already exists. Try another email.');
+            }else{
+                $temporaryPassword = substr(md5(random_bytes(10)), 0, 10);
+
+                $user = new User();
+                $user->addRole('ROLE_COMPANY_MANAGER');
+                $user->setPlainPassword($temporaryPassword);
+                $user->setEmail($data['email']);
+                $user->setUsername($data['username']);
+                $user->setEnabled(true);
+                $user->setCompany($company);
+
+                $em->persist($user);
+                $em->flush();
+
+                $message = (new \Swift_Message('Registration Email'))
+                    ->setFrom($this->getParameter('mailer_user'))
+                    ->setTo($data['email'])
+                    ->setBody(
+                        $this->renderView(
+                            '@App/companyAdmin/emails/createCompanyManager.html.twig',
+                            [
+                                'company' => $company,
+                                'name' => $data['username'],
+                                'password' => $temporaryPassword
+                            ]
+                        ),
+                        'text/html'
+                    );
+
+                $this->get('mailer')->send($message);
+
+                return $this->redirectToRoute('app_company_admin_manager_list');
+            }
+
+        }
+
+        return $this->render('@App/companyAdmin/managerAdd.html.twig', [
+            'company' => $company,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
      * Company Admin manager edit Action
      *
+     * @param Request $request
      * @param User $manager
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function managerEditAction(User $manager)
+    public function managerEditAction(Request $request, User $manager)
     {
-        return $this->render('@App/companyAdmin/managerEdit.html.twig');
+        $company = $this->getCompany();
+
+        //TODO: check is user from this company
+
+        $form = $this->createForm(CompanyManagerForm::class, $manager);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $user = $form->getData();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_manager_list');
+        }
+
+        return $this->render('@App/companyAdmin/managerEdit.html.twig', [
+            'company' => $company,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -64,7 +154,14 @@ class CompanyAdminController extends Controller
      */
     public function managerRemoveAction(User $manager)
     {
-        return $this->render('@App/companyAdmin/managerRemove.html.twig');
+        $company = $this->getCompany();
+        //TODO: check is user from this company
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($manager);
+        $em->flush();
+
+        return $this->redirectToRoute('app_company_admin_manager_list');
     }
 
     /**
@@ -76,7 +173,18 @@ class CompanyAdminController extends Controller
      */
     public function workerListAction(User $manager, $page)
     {
-        return $this->render('@App/companyAdmin/workerList.html.twig', array('page' => $page));
+        $company = $this->getCompany();
+
+        $pagination = $this->get('knp_paginator')->paginate(
+            $company->getWorkers(),
+            $page,
+            $this->getParameter('company_admin_list_per_page')
+        );
+
+        return $this->render('@App/companyAdmin/workerList.html.twig', [
+            'company' => $company,
+            'pagination' => $pagination
+        ]);
     }
 
     /**
@@ -85,21 +193,61 @@ class CompanyAdminController extends Controller
      * @param User $manager
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerAddAction(User $manager)
+    public function workerAddAction(Request $request, User $manager)
     {
-        return $this->render('@App/companyAdmin/workerAdd.html.twig');
+        $company = $this->getCompany();
+        $form = $this->createForm(CompanyWorkerForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $data = $form->getData();
+
+            $companyWorker = new CompanyWorker();
+            $companyWorker->setName($data['name']);
+            $companyWorker->setSurname($data['surname']);
+            $companyWorker->setCompany($company);
+
+            $em->persist($companyWorker);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_worker_list', ['manager' => $manager->getId()]);
+        }
+
+        return $this->render('@App/companyAdmin/workerAdd.html.twig', [
+            'company' => $company,
+            'form' => $form->createView()
+        ]);
     }
 
     /**
      * Company Admin worker edit Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerEditAction(User $manager, CompanyWorker $worker)
+    public function workerEditAction(Request $request, User $manager, CompanyWorker $worker)
     {
-        return $this->render('@App/companyAdmin/workerEdit.html.twig');
+        $form = $this->createForm(CompanyWorkerForm::class, $worker);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $editedWorker = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($editedWorker);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_worker_list', ['manager' => $manager->getId()]);
+        }
+
+        return $this->render('@App/companyAdmin/workerEdit.html.twig', [
+            'form' => $form->createView(),
+            'company' => $this->getCompany()
+        ]);
     }
 
     /**
@@ -111,7 +259,19 @@ class CompanyAdminController extends Controller
      */
     public function workerRemoveAction(User $manager, CompanyWorker $worker)
     {
-        return $this->render( '@App/companyAdmin/workerRemove.html.twig');
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var Appraise $appraise */
+        foreach ($worker->getAppraisals() as $appraise) {
+            $em->remove($appraise);
+        }
+
+        $em->remove($worker);
+        $em->flush();
+
+        return $this->redirectToRoute('app_company_admin_worker_list', [
+            'manager' => $manager->getId()
+        ]);
     }
 
     /**
@@ -124,32 +284,92 @@ class CompanyAdminController extends Controller
      */
     public function appraiseListAction(User $manager, CompanyWorker $worker, $page)
     {
-        return $this->render( '@App/companyAdmin/appraiseList.html.twig', array('page' => $page));
+        $pagination = $this->get('knp_paginator')->paginate(
+            $worker->getAppraisals(),
+            $page,
+            $this->getParameter('company_admin_list_per_page')
+        );
+
+        return $this->render( '@App/companyAdmin/appraiseList.html.twig', [
+            'pagination' => $pagination,
+            'worker' => $worker,
+            'company' => $this->getCompany()
+        ]);
     }
 
     /**
      * Company Admin appraise add Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseAddAction(User $manager, CompanyWorker $worker)
+    public function appraiseAddAction(Request $request, User $manager, CompanyWorker $worker)
     {
-        return $this->render('@App/companyAdmin/appraiseAdd.html.twig');
+        $form = $this->createForm(AppraiseForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+
+            $appraise = new Appraise();
+            $appraise->setRate($data['rate']);
+            $appraise->setDescription($data['description']);
+            $appraise->setDate(new \DateTime());
+            $appraise->setCompanyWorker($worker);
+
+            $em->persist($appraise);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_appraise_list', [
+                'manager' => $manager->getId(),
+                'worker' => $worker->getId(),
+            ]);
+        }
+
+        return $this->render('@App/companyAdmin/appraiseAdd.html.twig', [
+            'company' => $this->getCompany(),
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
      * Company Admin appraise edit Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
-     * @param Appraise $appraise
+     * @param Appraise      $appraise
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseEditAction(User $manager, CompanyWorker $worker, Appraise $appraise)
+    public function appraiseEditAction(Request $request, User $manager, CompanyWorker $worker, Appraise $appraise)
     {
-        return $this->render('@App/companyAdmin/appraiseEdit.html.twig');
+        $form = $this->createForm(AppraiseForm::class, $appraise);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $editedAppraise = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($editedAppraise);
+            $em->flush();
+
+            return $this->redirectToRoute('app_company_admin_appraise_list', [
+                'worker' => $worker->getId(),
+                'manager' => $manager->getId(),
+            ]);
+        }
+
+        return $this->render('@App/companyAdmin/appraiseEdit.html.twig', [
+            'form' => $form->createView(),
+            'company' => $this->getCompany(),
+            'manager' => $manager,
+            'worker' => $worker,
+        ]);
     }
 
     /**
@@ -162,21 +382,25 @@ class CompanyAdminController extends Controller
      */
     public function appraiseRemoveAction(User $manager, CompanyWorker $worker, Appraise $appraise)
     {
-        return $this->render('@App/companyAdmin/appraiseRemove.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($appraise);
+        $em->flush();
+
+        return $this->redirectToRoute('app_company_admin_appraise_list', [
+           'worker' => $worker->getId(),
+           'manager' => $manager->getId(),
+        ]);
     }
 
     /**
      * Function return company object for current user
      *
-     * @param int $mockUp
      * @return Company
      */
-    private function getCompany($mockUp = 5)
+    private function getCompany()
     {
-        //TODO: change this mock up to $this->getUser()->getCompany()
         return $this
-            ->getDoctrine()
-            ->getRepository(Company::class)
-            ->find($mockUp);
+            ->getUser()
+            ->getCompany();
     }
 }

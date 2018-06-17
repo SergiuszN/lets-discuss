@@ -22,6 +22,15 @@ class User extends FosUser
     protected $id;
 
     /**
+     * @var Company
+     *
+     * Many User one Company
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company", inversedBy="managers")
+     * @ORM\JoinColumn(name="company", referencedColumnName="id")
+     */
+    private $company;
+
+    /**
      * User constructor.
      */
     public function __construct()
@@ -37,5 +46,21 @@ class User extends FosUser
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return Company
+     */
+    public function getCompany()
+    {
+        return $this->company;
+    }
+
+    /**
+     * @param Company $company
+     */
+    public function setCompany($company)
+    {
+        $this->company = $company;
     }
 }

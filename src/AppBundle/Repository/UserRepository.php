@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Company;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,4 +13,22 @@ use Doctrine\ORM\EntityRepository;
  */
 class UserRepository extends EntityRepository
 {
+    /**
+     * Return all company manager users
+     *
+     * @param Company $company
+     * @return \Doctrine\ORM\Query
+     */
+    public function getCompanyManagersQuery(Company $company)
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.roles LIKE :role')
+            ->andWhere('u.company = :company')
+            ->setParameters([
+                'role' => '%"ROLE_COMPANY_MANAGER"%',
+                'company' => $company->getId()
+            ])
+            ->addOrderBy('u.id', 'DESC')
+            ->getQuery();
+    }
 }
