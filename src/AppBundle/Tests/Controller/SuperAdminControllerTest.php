@@ -57,6 +57,19 @@ class SuperAdminControllerTest extends WebTestCase
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
+    public function testSecuredAdminCompanyAddAction(){
+        $this->logIn();
+        $crawler = $this->client->request('GET', $this->router->generate('app_super_admin_company_add'));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Company Add Create new company', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredAdminCompanyAddAction(){
+        $this->client->request('GET', $this->router->generate('app_super_admin_company_add'));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
 
     private function logIn()
     {
