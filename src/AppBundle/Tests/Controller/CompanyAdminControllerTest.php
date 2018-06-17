@@ -42,6 +42,21 @@ class CompanyAdminControllerTest extends WebTestCase
         $this->assertSame('Dashboard Here you can see general system statistics', $crawler->filter('h1')->text());
     }
 
+    public function testSecuredCompanyAdminManagersList()
+    {
+        $this->logInAdmin();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_manager_list'));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Manager Lists Here you can see all added managers', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredCompanyAdminManagersList()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_manager_list'));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
     private function logIn($userId)
     {
         $session = $this->client->getContainer()->get('session');
