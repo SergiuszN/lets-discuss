@@ -98,7 +98,7 @@ class CompanyAdminControllerTest extends WebTestCase
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
-    public function testSecuredManagerWorkersAddAction()
+    public function testSecuredManagerWorkerAddAction()
     {
         $this->logInManager();
         $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_add', ['manager'=>24]));
@@ -107,9 +107,25 @@ class CompanyAdminControllerTest extends WebTestCase
         $this->assertSame('Worker Add Create new worker', $crawler->filter('h1')->text());
     }
 
-    public function testUnSecuredManagerWorkersAddAction()
+    public function testUnSecuredManagerWorkerAddAction()
     {
         $this->client->request('GET', $this->router->generate('app_company_admin_worker_add', ['manager'=>24]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredManagerWorkerEditAction()
+    {
+        $this->logInManager();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_edit',
+            ['manager'=>24, 'worker'=>5]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Worker Edit Edit worker', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredManagerWorkerEditAction()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_worker_edit', ['manager'=>24, 'worker'=>5]));
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
