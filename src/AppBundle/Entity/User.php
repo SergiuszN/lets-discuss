@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as FosUser;
 /**
@@ -31,11 +32,18 @@ class User extends FosUser
     private $company;
 
     /**
+     * One User has Many Audits.
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Audit", mappedBy="user")
+     */
+    private $audits;
+
+    /**
      * User constructor.
      */
     public function __construct()
     {
         parent::__construct();
+        $this->audits = new ArrayCollection();
     }
 
     /**
@@ -62,5 +70,21 @@ class User extends FosUser
     public function setCompany($company)
     {
         $this->company = $company;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAudits()
+    {
+        return $this->audits;
+    }
+
+    /**
+     * @param mixed $audits
+     */
+    public function setAudits($audits)
+    {
+        $this->audits = $audits;
     }
 }

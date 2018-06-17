@@ -9,11 +9,15 @@ use AppBundle\Entity\User;
 use AppBundle\Form\AppraiseForm;
 use AppBundle\Form\CompanyManagerForm;
 use AppBundle\Form\CompanyWorkerForm;
+use AppBundle\Interfaces\AuditInterface;
+use AppBundle\Traits\AuditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class CompanyAdminController extends Controller
+class CompanyAdminController extends Controller implements AuditInterface
 {
+    use AuditTrait;
+
     /**
      * Company Admin index Action
      *
@@ -23,6 +27,7 @@ class CompanyAdminController extends Controller
     {
         $company = $this->getCompany();
 
+        $this->saveAudit([]);
         return $this->render('@App/companyAdmin/index.html.twig', [
             'company' => $company
         ]);
@@ -44,6 +49,7 @@ class CompanyAdminController extends Controller
             $this->getParameter('super_admin_list_per_page')
         );
 
+        $this->saveAudit(['page' => $page]);
         return $this->render('@App/companyAdmin/managerList.html.twig', [
             'company' => $company,
             'pagination' => $pagination
@@ -63,51 +69,54 @@ class CompanyAdminController extends Controller
         $form = $this->createForm(CompanyManagerForm::class);
         $form->handleRequest($request);
 
-
-
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $data = $form->getData();
+            $this->saveAudit(['data' => $data]);
             $email = $em->getRepository(User::class)->findBy(array('email'=>$data['email']));
 
-            if(!empty($email)){
+            if (!empty($email)) {
                 $this->addFlash('danger', 'Email adress already exists. Try another email.');
-            }else{
-                $temporaryPassword = substr(md5(random_bytes(10)), 0, 10);
-
-                $user = new User();
-                $user->addRole('ROLE_COMPANY_MANAGER');
-                $user->setPlainPassword($temporaryPassword);
-                $user->setEmail($data['email']);
-                $user->setUsername($data['username']);
-                $user->setEnabled(true);
-                $user->setCompany($company);
-
-                $em->persist($user);
-                $em->flush();
-
-                $message = (new \Swift_Message('Registration Email'))
-                    ->setFrom($this->getParameter('mailer_user'))
-                    ->setTo($data['email'])
-                    ->setBody(
-                        $this->renderView(
-                            '@App/companyAdmin/emails/createCompanyManager.html.twig',
-                            [
-                                'company' => $company,
-                                'name' => $data['username'],
-                                'password' => $temporaryPassword
-                            ]
-                        ),
-                        'text/html'
-                    );
-
-                $this->get('mailer')->send($message);
-
-                return $this->redirectToRoute('app_company_admin_manager_list');
+                return $this->render('@App/companyAdmin/managerAdd.html.twig', [
+                    'company' => $company,
+                    'form' => $form->createView(),
+                ]);
             }
 
+            $temporaryPassword = substr(md5(random_bytes(10)), 0, 10);
+
+            $user = new User();
+            $user->addRole('ROLE_COMPANY_MANAGER');
+            $user->setPlainPassword($temporaryPassword);
+            $user->setEmail($data['email']);
+            $user->setUsername($data['username']);
+            $user->setEnabled(true);
+            $user->setCompany($company);
+
+            $em->persist($user);
+            $em->flush();
+
+            $message = (new \Swift_Message('Registration Email'))
+                ->setFrom($this->getParameter('mailer_user'))
+                ->setTo($data['email'])
+                ->setBody(
+                    $this->renderView(
+                        '@App/companyAdmin/emails/createCompanyManager.html.twig',
+                        [
+                            'company' => $company,
+                            'name' => $data['username'],
+                            'password' => $temporaryPassword
+                        ]
+                    ),
+                    'text/html'
+                );
+
+            $this->get('mailer')->send($message);
+
+            return $this->redirectToRoute('app_company_admin_manager_list');
         }
 
+        $this->saveAudit([]);
         return $this->render('@App/companyAdmin/managerAdd.html.twig', [
             'company' => $company,
             'form' => $form->createView(),
@@ -137,9 +146,11 @@ class CompanyAdminController extends Controller
             $em->persist($user);
             $em->flush();
 
+            $this->saveAudit(['user' => $user, 'manager' => $manager]);
             return $this->redirectToRoute('app_company_admin_manager_list');
         }
 
+        $this->saveAudit([]);
         return $this->render('@App/companyAdmin/managerEdit.html.twig', [
             'company' => $company,
             'form' => $form->createView(),
@@ -154,13 +165,13 @@ class CompanyAdminController extends Controller
      */
     public function managerRemoveAction(User $manager)
     {
-        $company = $this->getCompany();
-        //TODO: check is user from this company
+        if ($this->getCompany()->getId() === $manager->getCompany()->getId()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($manager);
+            $em->flush();
+        }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($manager);
-        $em->flush();
-
+        $this->saveAudit(['manager' => $manager]);
         return $this->redirectToRoute('app_company_admin_manager_list');
     }
 
@@ -181,6 +192,7 @@ class CompanyAdminController extends Controller
             $this->getParameter('company_admin_list_per_page')
         );
 
+        $this->saveAudit(['manager' => $manager, 'page' => $page]);
         return $this->render('@App/companyAdmin/workerList.html.twig', [
             'company' => $company,
             'pagination' => $pagination
@@ -211,9 +223,11 @@ class CompanyAdminController extends Controller
             $em->persist($companyWorker);
             $em->flush();
 
+            $this->saveAudit(['manager' => $manager, 'data' => $data]);
             return $this->redirectToRoute('app_company_admin_worker_list', ['manager' => $manager->getId()]);
         }
 
+        $this->saveAudit(['manager' => $manager]);
         return $this->render('@App/companyAdmin/workerAdd.html.twig', [
             'company' => $company,
             'form' => $form->createView()
@@ -241,9 +255,11 @@ class CompanyAdminController extends Controller
             $em->persist($editedWorker);
             $em->flush();
 
+            $this->saveAudit(['manager' => $manager, 'worker' => $worker, 'data' => $editedWorker]);
             return $this->redirectToRoute('app_company_admin_worker_list', ['manager' => $manager->getId()]);
         }
 
+        $this->saveAudit(['manager' => $manager, 'worker' => $worker]);
         return $this->render('@App/companyAdmin/workerEdit.html.twig', [
             'form' => $form->createView(),
             'company' => $this->getCompany()
@@ -269,6 +285,7 @@ class CompanyAdminController extends Controller
         $em->remove($worker);
         $em->flush();
 
+        $this->saveAudit(['manager' => $manager, 'worker' => $worker]);
         return $this->redirectToRoute('app_company_admin_worker_list', [
             'manager' => $manager->getId()
         ]);
@@ -290,6 +307,7 @@ class CompanyAdminController extends Controller
             $this->getParameter('company_admin_list_per_page')
         );
 
+        $this->saveAudit(['manager' => $manager, 'worker' => $worker, 'page' => $page]);
         return $this->render( '@App/companyAdmin/appraiseList.html.twig', [
             'pagination' => $pagination,
             'worker' => $worker,
@@ -324,12 +342,14 @@ class CompanyAdminController extends Controller
             $em->persist($appraise);
             $em->flush();
 
+            $this->saveAudit(['manager' => $manager, 'worker' => $worker, 'data' => $data]);
             return $this->redirectToRoute('app_company_admin_appraise_list', [
                 'manager' => $manager->getId(),
                 'worker' => $worker->getId(),
             ]);
         }
 
+        $this->saveAudit(['manager' => $manager, 'worker' => $worker]);
         return $this->render('@App/companyAdmin/appraiseAdd.html.twig', [
             'company' => $this->getCompany(),
             'form' => $form->createView(),
@@ -358,12 +378,14 @@ class CompanyAdminController extends Controller
             $em->persist($editedAppraise);
             $em->flush();
 
+            $this->saveAudit(['manager' => $manager, 'worker' => $worker, 'apraise' => $appraise, 'data' => $editedAppraise]);
             return $this->redirectToRoute('app_company_admin_appraise_list', [
                 'worker' => $worker->getId(),
                 'manager' => $manager->getId(),
             ]);
         }
 
+        $this->saveAudit(['manager' => $manager, 'worker' => $worker, 'apraise' => $appraise]);
         return $this->render('@App/companyAdmin/appraiseEdit.html.twig', [
             'form' => $form->createView(),
             'company' => $this->getCompany(),
@@ -386,6 +408,7 @@ class CompanyAdminController extends Controller
         $em->remove($appraise);
         $em->flush();
 
+        $this->saveAudit(['manager' => $manager, 'worker' => $worker, 'apraise' => $appraise]);
         return $this->redirectToRoute('app_company_admin_appraise_list', [
            'worker' => $worker->getId(),
            'manager' => $manager->getId(),

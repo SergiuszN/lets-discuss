@@ -7,12 +7,15 @@ use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
 use AppBundle\Form\CompanyEditForm;
 use AppBundle\Form\CompanyForm;
-use Doctrine\DBAL\ConnectionException;
+use AppBundle\Interfaces\AuditInterface;
+use AppBundle\Traits\AuditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class SuperAdminController extends Controller
+class SuperAdminController extends Controller implements AuditInterface
 {
+    use AuditTrait;
+
     /**
      * Super Admin index Action
      *
@@ -20,6 +23,7 @@ class SuperAdminController extends Controller
      */
     public function indexAction()
     {
+        $this->saveAudit([]);
         return $this->render('@App/superAdmin/index.html.twig');
     }
 
@@ -37,6 +41,7 @@ class SuperAdminController extends Controller
             $this->getParameter('super_admin_list_per_page')
         );
 
+        $this->saveAudit(['page' => $page]);
         return $this->render('@App/superAdmin/companyList.html.twig', [
             'pagination' => $pagination
         ]);
@@ -97,9 +102,11 @@ class SuperAdminController extends Controller
 
             $this->get('mailer')->send($message);
 
+            $this->saveAudit(['data' => $data]);
             return $this->redirectToRoute('app_super_admin_company_list');
         }
 
+        $this->saveAudit([]);
         return $this->render('@App/superAdmin/companyAdd.html.twig', array(
             'form' => $form->createView(),
         ));
@@ -124,9 +131,11 @@ class SuperAdminController extends Controller
             $em->persist($editedCompany);
             $em->flush();
 
+            $this->saveAudit(['company' => $company, 'data' => $editedCompany]);
             return $this->redirectToRoute('app_super_admin_company_list');
         }
 
+        $this->saveAudit(['company' => $company]);
         return $this->render('@App/superAdmin/companyEdit.html.twig', array('form' => $form->createView()));
     }
 
@@ -135,11 +144,10 @@ class SuperAdminController extends Controller
      *
      * @param Company $company
      * @return \Symfony\Component\HttpFoundation\Response
-     * @throws ConnectionException
      */
     public function companyRemoveAction(Company $company)
     {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
 
         try {
@@ -164,6 +172,7 @@ class SuperAdminController extends Controller
             $em->getConnection()->rollBack();
         }
 
+        $this->saveAudit(['company' => $company]);
         return $this->redirectToRoute('app_super_admin_company_list');
     }
 }
