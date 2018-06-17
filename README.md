@@ -26,3 +26,9 @@ NodeJs + NPM - https://nodejs.org/en/ polecam lts 8
 
 # Create super admin user: 
 php app/console fos:user:create userName user@mail.com userPassword --super-admin
+
+# Generate documentation
+* Install doxygen http://www.stack.nl/~dimitri/doxygen/download.html
+* cd docs
+* doxygen lest_discuss
+* open docs/html/index.html

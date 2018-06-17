@@ -14,3 +14,4 @@ bin/
 composer.phar
 web/bundles
 watchdog/saved
+docs/html
