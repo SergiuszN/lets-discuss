@@ -42,6 +42,48 @@ class SuperAdminControllerTest extends WebTestCase
         $this->assertSame('Dashboard Here you can see general system statistics', $crawler->filter('h1')->text());
     }
 
+    public function testSecuredAdminCompanyList()
+    {
+        $this->logIn();
+        $crawler = $this->client->request('GET', $this->router->generate('app_super_admin_company_list'));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Company Lists Here you can see all added companies', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredAdminCompanyList()
+    {
+        $this->client->request('GET', $this->router->generate('app_super_admin_company_list'));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredAdminCompanyAddAction(){
+        $this->logIn();
+        $crawler = $this->client->request('GET', $this->router->generate('app_super_admin_company_add'));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Company Add Create new company', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredAdminCompanyAddAction(){
+        $this->client->request('GET', $this->router->generate('app_super_admin_company_add'));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredAdminCompanyEditAction(){
+        $this->logIn();
+        $crawler = $this->client->request('GET', $this->router->generate('app_super_admin_company_edit', ['company'=>15]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Company Edit Edit company', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredAdminCompanyEditAction(){
+        $this->client->request('GET', $this->router->generate('app_super_admin_company_edit', ['company'=>15]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+
     private function logIn()
     {
         $session = $this->client->getContainer()->get('session');
