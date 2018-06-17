@@ -32,3 +32,6 @@ php app/console fos:user:create userName user@mail.com userPassword --super-admi
 * cd docs
 * doxygen lest_discuss
 * open docs/html/index.html
+
+#Testing
+./bin/simple-phpunit -c app/
