@@ -65,8 +65,21 @@ class CompanyAdminControllerTest extends WebTestCase
         $this->assertSame('Manager Add Create new manager', $crawler->filter('h1')->text());
     }
 
-    public function testUnSecuredAdminCompanyAddAction(){
+    public function testUnSecuredCompanyAdminManagerAddAction(){
         $this->client->request('GET', $this->router->generate('app_company_admin_manager_add'));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredCompanyAdminManagerEditAction(){
+        $this->logInAdmin();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_manager_edit', ['manager'=>24]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Manager Edit Edit manager', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredCompanyAdminManagerEditAction(){
+        $this->client->request('GET', $this->router->generate('app_company_admin_manager_edit', ['manager'=>24]));
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
