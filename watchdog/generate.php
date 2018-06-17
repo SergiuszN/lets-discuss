@@ -12,9 +12,4 @@ $processor->setFolders($config['track']['folders']);
 $processor->setFiles($config['track']['files']);
 $processor->setSavePath($config['tmp']);
 $processor->calculate();
-
-$changed = $processor->isChanged();
-
-if ($changed !== false) {
-    $processor->sendAlert($changed);
-}
+$processor->dump();
