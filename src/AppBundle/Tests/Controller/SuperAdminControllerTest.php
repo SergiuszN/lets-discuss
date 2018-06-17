@@ -51,6 +51,12 @@ class SuperAdminControllerTest extends WebTestCase
         $this->assertSame('Company Lists Here you can see all added companies', $crawler->filter('h1')->text());
     }
 
+    public function testUnSecuredAdminCompanyList()
+    {
+        $this->client->request('GET', $this->router->generate('app_super_admin_company_list'));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
 
     private function logIn()
     {
