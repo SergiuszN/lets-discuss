@@ -20,7 +20,7 @@ trait AuditTrait
         $audit = new Audit();
         $audit->setDate(new \DateTime());
         $audit->setUser($this->getUser());
-        $audit->setAction($this->getRequest()->attributes->get('_controller'));
+        $audit->setAction($this->container->get('request_stack')->getCurrentRequest()->attributes->get('_controller'));
         $audit->setIp($this->get('request_stack')->getCurrentRequest()->getClientIp());
         $audit->setParameters(json_encode($data));
 
