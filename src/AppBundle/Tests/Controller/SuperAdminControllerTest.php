@@ -42,6 +42,16 @@ class SuperAdminControllerTest extends WebTestCase
         $this->assertSame('Dashboard Here you can see general system statistics', $crawler->filter('h1')->text());
     }
 
+    public function testSecuredAdminCompanyList()
+    {
+        $this->logIn();
+        $crawler = $this->client->request('GET', $this->router->generate('app_super_admin_company_list'));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Company Lists Here you can see all added companies', $crawler->filter('h1')->text());
+    }
+
+
     private function logIn()
     {
         $session = $this->client->getContainer()->get('session');
