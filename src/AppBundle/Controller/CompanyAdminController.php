@@ -9,6 +9,7 @@ use AppBundle\Entity\User;
 use AppBundle\Form\AppraiseForm;
 use AppBundle\Form\CompanyManagerForm;
 use AppBundle\Form\CompanyWorkerForm;
+use AppBundle\Form\RemoveConfirmationForm;
 use AppBundle\Interfaces\AuditInterface;
 use AppBundle\Traits\AuditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -269,25 +270,38 @@ class CompanyAdminController extends Controller implements AuditInterface
     /**
      * Company Admin worker remove Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerRemoveAction(User $manager, CompanyWorker $worker)
+    public function workerRemoveAction(Request $request, User $manager, CompanyWorker $worker)
     {
-        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm(RemoveConfirmationForm::class);
+        $form->handleRequest($request);
 
-        /** @var Appraise $appraise */
-        foreach ($worker->getAppraisals() as $appraise) {
-            $em->remove($appraise);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            /** @var Appraise $appraise */
+            foreach ($worker->getAppraisals() as $appraise) {
+                $em->remove($appraise);
+            }
+
+            $em->remove($worker);
+            $em->flush();
+
+            $this->saveAudit(['manager' => $manager, 'worker' => $worker]);
+            return $this->redirectToRoute('app_company_admin_worker_list', [
+                'manager' => $manager->getId()
+            ]);
         }
 
-        $em->remove($worker);
-        $em->flush();
-
-        $this->saveAudit(['manager' => $manager, 'worker' => $worker]);
-        return $this->redirectToRoute('app_company_admin_worker_list', [
-            'manager' => $manager->getId()
+        return $this->render('@App/companyAdmin/workerRemove.html.twig', [
+            'company' => $this->getCompany(),
+            'worker' => $worker,
+            'form' => $form->createView(),
         ]);
     }
 
