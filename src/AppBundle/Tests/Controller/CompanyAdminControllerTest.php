@@ -42,6 +42,142 @@ class CompanyAdminControllerTest extends WebTestCase
         $this->assertSame('Dashboard Here you can see general system statistics', $crawler->filter('h1')->text());
     }
 
+    public function testSecuredCompanyAdminManagersList()
+    {
+        $this->logInAdmin();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_manager_list'));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Manager Lists Here you can see all added managers', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredCompanyAdminManagersList()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_manager_list'));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredCompanyAdminManagerAddAction(){
+        $this->logInAdmin();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_manager_add'));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Manager Add Create new manager', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredCompanyAdminManagerAddAction(){
+        $this->client->request('GET', $this->router->generate('app_company_admin_manager_add'));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredCompanyAdminManagerEditAction(){
+        $this->logInAdmin();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_manager_edit', ['manager'=>24]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Manager Edit Edit manager', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredCompanyAdminManagerEditAction(){
+        $this->client->request('GET', $this->router->generate('app_company_admin_manager_edit', ['manager'=>24]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredManagerWorkersList()
+    {
+        $this->logInManager();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_list', ['manager'=>24]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Worker Lists Here you can see all added workers', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredManagerWorkersList()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_worker_list', ['manager'=>24]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredManagerWorkerAddAction()
+    {
+        $this->logInManager();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_add', ['manager'=>24]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Worker Add Create new worker', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredManagerWorkerAddAction()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_worker_add', ['manager'=>24]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredManagerWorkerEditAction()
+    {
+        $this->logInManager();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_edit',
+            ['manager'=>24, 'worker'=>5]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Worker Edit Edit worker', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredManagerWorkerEditAction()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_worker_edit', ['manager'=>24, 'worker'=>5]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredManagerAppraiseListAction()
+    {
+        $this->logInManager();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_appraise_list',
+            ['manager'=>24, 'worker'=>5]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Appraise Lists Here you can see all added appraisals', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredManagerAppraiseListAction()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_appraise_list', ['manager'=>24, 'worker'=>5]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredManagerAppraiseAddAction()
+    {
+        $this->logInManager();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_appraise_add',
+            ['manager'=>24, 'worker'=>5]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Appraise Add Add new appraise', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredManagerAppraiseAddAction()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_appraise_add', ['manager'=>24, 'worker'=>5]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testSecuredManagerAppraiseEditAction()
+    {
+        $this->logInManager();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_appraise_edit',
+            ['manager'=>24, 'worker'=>5, 'appraise'=>8]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Appraise Edit Edit Appraise', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredManagerAppraiseEditAction()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_appraise_edit',
+            ['manager'=>24, 'worker'=>5, 'appraise'=>8]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
     private function logIn($userId)
     {
         $session = $this->client->getContainer()->get('session');
