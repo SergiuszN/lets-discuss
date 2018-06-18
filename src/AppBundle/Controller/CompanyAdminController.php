@@ -298,6 +298,7 @@ class CompanyAdminController extends Controller implements AuditInterface
             ]);
         }
 
+        $this->saveAudit(['manager' => $manager, 'worker' => $worker]);
         return $this->render('@App/companyAdmin/workerRemove.html.twig', [
             'company' => $this->getCompany(),
             'worker' => $worker,
