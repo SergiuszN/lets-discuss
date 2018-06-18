@@ -9,6 +9,7 @@ use AppBundle\Entity\User;
 use AppBundle\Form\AppraiseForm;
 use AppBundle\Form\CompanyManagerForm;
 use AppBundle\Form\CompanyWorkerForm;
+use AppBundle\Form\RemoveConfirmationForm;
 use AppBundle\Interfaces\AuditInterface;
 use AppBundle\Traits\AuditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -160,19 +161,33 @@ class CompanyAdminController extends Controller implements AuditInterface
     /**
      * Company Admin manager remove Action
      *
-     * @param User $manager
+     * @param Request $request
+     * @param User    $manager
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function managerRemoveAction(User $manager)
+    public function managerRemoveAction(Request $request, User $manager)
     {
-        if ($this->getCompany()->getId() === $manager->getCompany()->getId()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($manager);
-            $em->flush();
+        $form = $this->createForm(RemoveConfirmationForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($this->getCompany()->getId() === $manager->getCompany()->getId()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($manager);
+                $em->flush();
+            }
+
+            $this->saveAudit(['manager' => $manager]);
+            return $this->redirectToRoute('app_company_admin_manager_list');
         }
 
         $this->saveAudit(['manager' => $manager]);
-        return $this->redirectToRoute('app_company_admin_manager_list');
+        return $this->render('@App/companyAdmin/managerRemove.html.twig', [
+            'form' => $form->createView(),
+            'manager' => $manager,
+            'company' => $this->getCompany(),
+        ]);
     }
 
     /**
@@ -269,25 +284,39 @@ class CompanyAdminController extends Controller implements AuditInterface
     /**
      * Company Admin worker remove Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workerRemoveAction(User $manager, CompanyWorker $worker)
+    public function workerRemoveAction(Request $request, User $manager, CompanyWorker $worker)
     {
-        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm(RemoveConfirmationForm::class);
+        $form->handleRequest($request);
 
-        /** @var Appraise $appraise */
-        foreach ($worker->getAppraisals() as $appraise) {
-            $em->remove($appraise);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            /** @var Appraise $appraise */
+            foreach ($worker->getAppraisals() as $appraise) {
+                $em->remove($appraise);
+            }
+
+            $em->remove($worker);
+            $em->flush();
+
+            $this->saveAudit(['manager' => $manager, 'worker' => $worker]);
+            return $this->redirectToRoute('app_company_admin_worker_list', [
+                'manager' => $manager->getId()
+            ]);
         }
 
-        $em->remove($worker);
-        $em->flush();
-
         $this->saveAudit(['manager' => $manager, 'worker' => $worker]);
-        return $this->redirectToRoute('app_company_admin_worker_list', [
-            'manager' => $manager->getId()
+        return $this->render('@App/companyAdmin/workerRemove.html.twig', [
+            'company' => $this->getCompany(),
+            'worker' => $worker,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -397,21 +426,37 @@ class CompanyAdminController extends Controller implements AuditInterface
     /**
      * Company Admin appraise remove Action
      *
-     * @param User $manager
+     * @param Request       $request
+     * @param User          $manager
      * @param CompanyWorker $worker
-     * @param Appraise $appraise
+     * @param Appraise      $appraise
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function appraiseRemoveAction(User $manager, CompanyWorker $worker, Appraise $appraise)
+    public function appraiseRemoveAction(Request $request, User $manager, CompanyWorker $worker, Appraise $appraise)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($appraise);
-        $em->flush();
+        $form = $this->createForm(RemoveConfirmationForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($appraise);
+            $em->flush();
+
+            $this->saveAudit(['manager' => $manager, 'worker' => $worker, 'apraise' => $appraise]);
+            return $this->redirectToRoute('app_company_admin_appraise_list', [
+                'worker' => $worker->getId(),
+                'manager' => $manager->getId(),
+            ]);
+        }
 
         $this->saveAudit(['manager' => $manager, 'worker' => $worker, 'apraise' => $appraise]);
-        return $this->redirectToRoute('app_company_admin_appraise_list', [
-           'worker' => $worker->getId(),
-           'manager' => $manager->getId(),
+        return $this->render('@App/companyAdmin/appraiseRemove.html.twig', [
+            'company' => $this->getCompany(),
+            'manager' => $manager,
+            'worker' => $worker,
+            'appraise' => $appraise,
+            'form' => $form->createView(),
         ]);
     }
 
