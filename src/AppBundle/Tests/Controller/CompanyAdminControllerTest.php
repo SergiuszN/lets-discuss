@@ -145,6 +145,22 @@ class CompanyAdminControllerTest extends WebTestCase
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
+    public function testSecuredManagerAppraiseAddAction()
+    {
+        $this->logInManager();
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_appraise_add',
+            ['manager'=>24, 'worker'=>5]));
+
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Appraise Add Add new appraise', $crawler->filter('h1')->text());
+    }
+
+    public function testUnSecuredManagerAppraiseAddAction()
+    {
+        $this->client->request('GET', $this->router->generate('app_company_admin_appraise_add', ['manager'=>24, 'worker'=>5]));
+        $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
+    }
+
     private function logIn($userId)
     {
         $session = $this->client->getContainer()->get('session');
