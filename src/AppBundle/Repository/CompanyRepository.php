@@ -9,6 +9,11 @@ use Doctrine\ORM\EntityRepository;
  */
 class CompanyRepository extends EntityRepository
 {
+    /**
+     * Super Admin admin list Query
+     *
+     * @return \Doctrine\ORM\Query
+     */
     public function getSuperAdminListQuery()
     {
         return $this->createQueryBuilder('c')
