@@ -57,6 +57,8 @@ class CompanyWorker
     /****************************/
 
     /**
+     * Get CompanyWorker id
+     *
      * @return int
      */
     public function getId()
@@ -65,6 +67,8 @@ class CompanyWorker
     }
 
     /**
+     * Get CompanyWorker name
+     *
      * @return string
      */
     public function getName()
@@ -73,6 +77,8 @@ class CompanyWorker
     }
 
     /**
+     * Get CompanyWorker company
+     *
      * @return Company
      */
     public function getCompany()
@@ -81,6 +87,8 @@ class CompanyWorker
     }
 
     /**
+     * Get appraisals attached to CompanyWorker
+     *
      * @return Appraise | ArrayCollection
      */
     public function getAppraisals()
@@ -89,6 +97,8 @@ class CompanyWorker
     }
 
     /**
+     * Get CompanyWorker surname
+     *
      * @return string
      */
     public function getSurname()
@@ -97,6 +107,8 @@ class CompanyWorker
     }
 
     /**
+     * Set CompanyWorker name
+     *
      * @param string $name
      */
     public function setName($name)
@@ -105,6 +117,8 @@ class CompanyWorker
     }
 
     /**
+     * Set CompanyWorker company
+     *
      * @param Company $company
      */
     public function setCompany($company)
@@ -113,6 +127,8 @@ class CompanyWorker
     }
 
     /**
+     * Set CompanyWorker surname
+     *
      * @param string $surname
      */
     public function setSurname($surname)
@@ -121,7 +137,7 @@ class CompanyWorker
     }
 
     /**
-     * Add appraise
+     * Add appraise to CompanyWorker
      *
      * @param Appraise $appraise
      */

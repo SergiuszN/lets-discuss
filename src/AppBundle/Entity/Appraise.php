@@ -55,6 +55,8 @@ class Appraise
     /***********************/
 
     /**
+     * Get Appraise description
+     *
      * @return string
      */
     public function getDescription()
@@ -63,6 +65,8 @@ class Appraise
     }
 
     /**
+     * Get Appraise id
+     *
      * @return int
      */
     public function getId()
@@ -71,6 +75,8 @@ class Appraise
     }
 
     /**
+     * Get Appraise date
+     *
      * @return \DateTime
      */
     public function getDate()
@@ -79,6 +85,8 @@ class Appraise
     }
 
     /**
+     * Get Company Worker attached to Appraise
+     *
      * @return CompanyWorker
      */
     public function getCompanyWorker()
@@ -87,6 +95,8 @@ class Appraise
     }
 
     /**
+     * Get rate of Appraise
+     *
      * @return int
      */
     public function getRate()
@@ -95,6 +105,8 @@ class Appraise
     }
 
     /**
+     * Set Appraise description
+     *
      * @param string $description
      */
     public function setDescription($description)
@@ -103,6 +115,8 @@ class Appraise
     }
 
     /**
+     * Set Appraise date
+     *
      * @param \DateTime $date
      */
     public function setDate($date)
@@ -111,6 +125,8 @@ class Appraise
     }
 
     /**
+     * Set CompanyWorker attached to Appraise
+     *
      * @param CompanyWorker $companyWorker
      */
     public function setCompanyWorker($companyWorker)
@@ -119,6 +135,8 @@ class Appraise
     }
 
     /**
+     * Set rate of Appraise
+     *
      * @param int $rate
      */
     public function setRate($rate)

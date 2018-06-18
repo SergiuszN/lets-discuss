@@ -46,8 +46,10 @@ class User extends FosUser
         $this->audits = new ArrayCollection();
     }
 
+    /****************************/
+
     /**
-     * Get id
+     * Get User id
      *
      * @return integer
      */
@@ -57,6 +59,8 @@ class User extends FosUser
     }
 
     /**
+     * Get User company
+     *
      * @return Company
      */
     public function getCompany()
@@ -65,6 +69,8 @@ class User extends FosUser
     }
 
     /**
+     * Set User company
+     *
      * @param Company $company
      */
     public function setCompany($company)
@@ -73,6 +79,8 @@ class User extends FosUser
     }
 
     /**
+     * Get User audits
+     *
      * @return mixed
      */
     public function getAudits()
@@ -81,6 +89,8 @@ class User extends FosUser
     }
 
     /**
+     * Set User audits
+     *
      * @param mixed $audits
      */
     public function setAudits($audits)
