@@ -11,6 +11,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CompanyManagerForm extends AbstractType
 {
+    /**
+     * Build company manager form
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -19,11 +25,21 @@ class CompanyManagerForm extends AbstractType
             ->add('save', SubmitType::class, array('label' => 'Create'));
     }
 
+    /**
+     * Configure company manager form options
+     *
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
 
     }
 
+    /**
+     * Get company manager form BlockPrefix
+     *
+     * @return string
+     */
     public function getBlockPrefix()
     {
         return 'app_bundle_company_manager_form';

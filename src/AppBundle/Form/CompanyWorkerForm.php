@@ -10,6 +10,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CompanyWorkerForm extends AbstractType
 {
+    /**
+     * Build company worker form
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -18,11 +24,21 @@ class CompanyWorkerForm extends AbstractType
             ->add('save', SubmitType::class, array('label' => 'Create worker', 'attr' => ['class' => 'btn btn-primary']));
     }
 
+    /**
+     * Configure company worker form options
+     *
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
 
     }
 
+    /**
+     * Get company worker form BlockPrefix
+     *
+     * @return string
+     */
     public function getBlockPrefix()
     {
         return 'app_bundle_company_worker';
