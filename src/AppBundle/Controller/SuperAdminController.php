@@ -7,6 +7,7 @@ use AppBundle\Entity\CompanyWorker;
 use AppBundle\Entity\User;
 use AppBundle\Form\CompanyEditForm;
 use AppBundle\Form\CompanyForm;
+use AppBundle\Form\RemoveConfirmationForm;
 use AppBundle\Interfaces\AuditInterface;
 use AppBundle\Traits\AuditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -142,37 +143,50 @@ class SuperAdminController extends Controller implements AuditInterface
     /**
      * Super Admin company remove Action
      *
+     * @param Request $request
      * @param Company $company
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function companyRemoveAction(Company $company)
+    public function companyRemoveAction(Request $request, Company $company)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->getConnection()->beginTransaction();
+        $form = $this->createForm(RemoveConfirmationForm::class);
+        $form->handleRequest($request);
 
-        try {
-            /** @var User $manager */
-            foreach ($company->getManagers() as $manager) {
-                $em->remove($manager);
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
 
-            /** @var CompanyWorker $worker */
-            foreach ($company->getWorkers() as $worker) {
-                foreach ($worker->getAppraisals() as $appraise) {
-                    $em->remove($appraise);
+            try {
+                /** @var User $manager */
+                foreach ($company->getManagers() as $manager) {
+                    $em->remove($manager);
                 }
 
-                $em->remove($worker);
+                /** @var CompanyWorker $worker */
+                foreach ($company->getWorkers() as $worker) {
+                    foreach ($worker->getAppraisals() as $appraise) {
+                        $em->remove($appraise);
+                    }
+
+                    $em->remove($worker);
+                }
+
+                $em->remove($company);
+                $em->flush();
+                $em->getConnection()->commit();
+            } catch (\Exception $e) {
+                $em->getConnection()->rollBack();
             }
 
-            $em->remove($company);
-            $em->flush();
-            $em->getConnection()->commit();
-        } catch (\Exception $e) {
-            $em->getConnection()->rollBack();
+            $this->saveAudit(['company' => $company]);
+            return $this->redirectToRoute('app_super_admin_company_list');
         }
 
         $this->saveAudit(['company' => $company]);
-        return $this->redirectToRoute('app_super_admin_company_list');
+        return $this->render('@App/superAdmin/companyRemove.html.twig', [
+            'form' => $form->createView(),
+            'company' => $company,
+        ]);
     }
 }

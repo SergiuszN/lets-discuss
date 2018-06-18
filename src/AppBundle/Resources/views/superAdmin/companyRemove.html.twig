@@ -1,1 +1,21 @@
-Company Remove {{ company }}
+{% extends '@App/layout.html.twig' %}
+
+{% block body %}
+    {% include '@App/superAdmin/components/navbar.html.twig' %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('app_super_admin_homepage') }}">Dashboard</a></li>
+        <li><a href="{{ path('app_super_admin_company_list') }}">Company List</a></li>
+        <li class="active">Company Remove</li>
+    </ol>
+
+    <div class="page-header">
+        <h1>Company Remove <br class="visible-xs"><small>Please confirm removal of this company</small></h1>
+    </div>
+
+    <div class="remove-confirmation-area bg-danger">
+        <div>Id: <b>{{ company.id }}</b></div>
+        <div>Name: <b>{{ company.name }}</b></div>
+        <div>Description: <b>{{ company.description }}</b></div>
+    </div>
+    {{ form(form) }}
+{% endblock %}
