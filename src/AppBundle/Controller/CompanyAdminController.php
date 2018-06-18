@@ -161,19 +161,33 @@ class CompanyAdminController extends Controller implements AuditInterface
     /**
      * Company Admin manager remove Action
      *
-     * @param User $manager
+     * @param Request $request
+     * @param User    $manager
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function managerRemoveAction(User $manager)
+    public function managerRemoveAction(Request $request, User $manager)
     {
-        if ($this->getCompany()->getId() === $manager->getCompany()->getId()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($manager);
-            $em->flush();
+        $form = $this->createForm(RemoveConfirmationForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($this->getCompany()->getId() === $manager->getCompany()->getId()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($manager);
+                $em->flush();
+            }
+
+            $this->saveAudit(['manager' => $manager]);
+            return $this->redirectToRoute('app_company_admin_manager_list');
         }
 
         $this->saveAudit(['manager' => $manager]);
-        return $this->redirectToRoute('app_company_admin_manager_list');
+        return $this->render('@App/companyAdmin/managerRemove.html.twig', [
+            'form' => $form->createView(),
+            'manager' => $manager,
+            'company' => $this->getCompany(),
+        ]);
     }
 
     /**
