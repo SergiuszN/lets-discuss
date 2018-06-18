@@ -57,6 +57,8 @@ class Company
     /*******************************/
 
     /**
+     * Get Company id
+     *
      * @return int
      */
     public function getId()
@@ -65,6 +67,8 @@ class Company
     }
 
     /**
+     * Get Company description
+     *
      * @return string
      */
     public function getDescription()
@@ -73,6 +77,8 @@ class Company
     }
 
     /**
+     * Get Company name
+     *
      * @return string
      */
     public function getName()
@@ -81,6 +87,8 @@ class Company
     }
 
     /**
+     * Get Company workers
+     *
      * @return CompanyWorker | ArrayCollection
      */
     public function getWorkers()
@@ -89,6 +97,8 @@ class Company
     }
 
     /**
+     * Get Company managers
+     *
      * @return User | ArrayCollection
      */
     public function getManagers()
@@ -97,6 +107,8 @@ class Company
     }
 
     /**
+     * Set Company name
+     *
      * @param string $name
      */
     public function setName($name)
@@ -105,6 +117,8 @@ class Company
     }
 
     /**
+     * Set Company description
+     *
      * @param string $description
      */
     public function setDescription($description)

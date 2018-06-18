@@ -61,9 +61,10 @@ class Audit
      */
     private $parameters;
 
+    /***********************/
 
     /**
-     * Get id
+     * Get Audit id
      *
      * @return integer 
      */
@@ -73,7 +74,7 @@ class Audit
     }
 
     /**
-     * Set date
+     * Set Audit date
      *
      * @param \DateTime $date
      * @return Audit
@@ -86,7 +87,7 @@ class Audit
     }
 
     /**
-     * Get date
+     * Get Audit date
      *
      * @return \DateTime 
      */
@@ -96,7 +97,7 @@ class Audit
     }
 
     /**
-     * Set user
+     * Set Audit user
      *
      * @param integer $user
      * @return Audit
@@ -109,7 +110,7 @@ class Audit
     }
 
     /**
-     * Get user
+     * Get Audit user
      *
      * @return integer 
      */
@@ -119,7 +120,7 @@ class Audit
     }
 
     /**
-     * Set ip
+     * Set Audit ip
      *
      * @param string $ip
      * @return Audit
@@ -132,7 +133,7 @@ class Audit
     }
 
     /**
-     * Get ip
+     * Get Audit ip
      *
      * @return string 
      */
@@ -142,7 +143,7 @@ class Audit
     }
 
     /**
-     * Set action
+     * Set Audit action
      *
      * @param string $action
      * @return Audit
@@ -155,7 +156,7 @@ class Audit
     }
 
     /**
-     * Get action
+     * Get Audit action
      *
      * @return string 
      */
@@ -165,7 +166,7 @@ class Audit
     }
 
     /**
-     * Set parameters
+     * Set Audit parameters
      *
      * @param string $parameters
      * @return Audit
@@ -178,7 +179,7 @@ class Audit
     }
 
     /**
-     * Get parameters
+     * Get Audit parameters
      *
      * @return string 
      */
