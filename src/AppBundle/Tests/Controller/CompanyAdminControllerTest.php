@@ -72,21 +72,24 @@ class CompanyAdminControllerTest extends WebTestCase
 
     public function testSecuredCompanyAdminManagerEditAction(){
         $this->logInAdmin();
-        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_manager_edit', ['manager'=>24]));
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_manager_edit',
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager')]));
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Manager Edit Edit manager', $crawler->filter('h1')->text());
     }
 
     public function testUnSecuredCompanyAdminManagerEditAction(){
-        $this->client->request('GET', $this->router->generate('app_company_admin_manager_edit', ['manager'=>24]));
+        $this->client->request('GET', $this->router->generate('app_company_admin_manager_edit',
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager')]));
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
     public function testSecuredManagerWorkersList()
     {
         $this->logInManager();
-        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_list', ['manager'=>24]));
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_list',
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager')]));
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Worker Lists Here you can see all added workers', $crawler->filter('h1')->text());
@@ -94,14 +97,16 @@ class CompanyAdminControllerTest extends WebTestCase
 
     public function testUnSecuredManagerWorkersList()
     {
-        $this->client->request('GET', $this->router->generate('app_company_admin_worker_list', ['manager'=>24]));
+        $this->client->request('GET', $this->router->generate('app_company_admin_worker_list',
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager')]));
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
     public function testSecuredManagerWorkerAddAction()
     {
         $this->logInManager();
-        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_add', ['manager'=>24]));
+        $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_add',
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager')]));
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Worker Add Create new worker', $crawler->filter('h1')->text());
@@ -109,7 +114,8 @@ class CompanyAdminControllerTest extends WebTestCase
 
     public function testUnSecuredManagerWorkerAddAction()
     {
-        $this->client->request('GET', $this->router->generate('app_company_admin_worker_add', ['manager'=>24]));
+        $this->client->request('GET', $this->router->generate('app_company_admin_worker_add',
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager')]));
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
@@ -117,7 +123,8 @@ class CompanyAdminControllerTest extends WebTestCase
     {
         $this->logInManager();
         $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_worker_edit',
-            ['manager'=>24, 'worker'=>5]));
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager'),
+                'worker'=>$this->container->getParameter('test_id_company_worker')]));
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Worker Edit Edit worker', $crawler->filter('h1')->text());
@@ -133,7 +140,8 @@ class CompanyAdminControllerTest extends WebTestCase
     {
         $this->logInManager();
         $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_appraise_list',
-            ['manager'=>24, 'worker'=>5]));
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager'),
+                'worker'=>$this->container->getParameter('test_id_company_worker')]));
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Appraise Lists Here you can see all added appraisals', $crawler->filter('h1')->text());
@@ -149,7 +157,8 @@ class CompanyAdminControllerTest extends WebTestCase
     {
         $this->logInManager();
         $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_appraise_add',
-            ['manager'=>24, 'worker'=>5]));
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager'),
+                'worker'=>$this->container->getParameter('test_id_company_worker')]));
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Appraise Add Add new appraise', $crawler->filter('h1')->text());
@@ -157,7 +166,10 @@ class CompanyAdminControllerTest extends WebTestCase
 
     public function testUnSecuredManagerAppraiseAddAction()
     {
-        $this->client->request('GET', $this->router->generate('app_company_admin_appraise_add', ['manager'=>24, 'worker'=>5]));
+
+        $this->client->request('GET', $this->router->generate('app_company_admin_appraise_add',
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager'),
+                'worker'=>$this->container->getParameter('test_id_company_worker')]));
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
@@ -165,7 +177,9 @@ class CompanyAdminControllerTest extends WebTestCase
     {
         $this->logInManager();
         $crawler = $this->client->request('GET', $this->router->generate('app_company_admin_appraise_edit',
-            ['manager'=>24, 'worker'=>5, 'appraise'=>8]));
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager'),
+                'worker'=>$this->container->getParameter('test_id_company_worker'),
+                'appraise'=>$this->container->getParameter('test_id_worker_appraise')]));
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Appraise Edit Edit Appraise', $crawler->filter('h1')->text());
@@ -174,7 +188,9 @@ class CompanyAdminControllerTest extends WebTestCase
     public function testUnSecuredManagerAppraiseEditAction()
     {
         $this->client->request('GET', $this->router->generate('app_company_admin_appraise_edit',
-            ['manager'=>24, 'worker'=>5, 'appraise'=>8]));
+            ['manager'=>$this->container->getParameter('test_id_user_company_manager'),
+                'worker'=>$this->container->getParameter('test_id_company_worker'),
+                'appraise'=>$this->container->getParameter('test_id_worker_appraise')]));
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
