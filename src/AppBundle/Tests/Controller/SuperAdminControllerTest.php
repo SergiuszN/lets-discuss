@@ -72,14 +72,16 @@ class SuperAdminControllerTest extends WebTestCase
 
     public function testSecuredAdminCompanyEditAction(){
         $this->logIn();
-        $crawler = $this->client->request('GET', $this->router->generate('app_super_admin_company_edit', ['company'=>15]));
+        $crawler = $this->client->request('GET', $this->router->generate('app_super_admin_company_edit',
+            ['company'=>$this->container->getParameter('test_id_company')]));
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Company Edit Edit company', $crawler->filter('h1')->text());
     }
 
     public function testUnSecuredAdminCompanyEditAction(){
-        $this->client->request('GET', $this->router->generate('app_super_admin_company_edit', ['company'=>15]));
+        $this->client->request('GET', $this->router->generate('app_super_admin_company_edit',
+            ['company'=>$this->container->getParameter('test_id_company')]));
         $this->assertSame(Response::HTTP_FOUND , $this->client->getResponse()->getStatusCode());
     }
 
