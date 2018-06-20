@@ -29,7 +29,8 @@ class AppraiseForm extends AbstractType
                     '3' => '3',
                     '4' => '4',
                     '5' => '5',
-                )
+                ),
+                'choices_as_values' => true,
             ))
             ->add('description', TextareaType::class, array('required' => false, 'label' => 'Description'))
             ->add('save', SubmitType::class, array('label' => 'Add appraise'));

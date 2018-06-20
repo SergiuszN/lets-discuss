@@ -21,3 +21,6 @@ parameters:
     test_id_user_super_admin: 1
     test_id_user_company_admin: 2
     test_id_user_company_manager: 3
+    test_id_company: 1
+    test_id_worker_appraise: 1
+    test_id_company_worker: 1
