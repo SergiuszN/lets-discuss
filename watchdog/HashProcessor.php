@@ -141,7 +141,7 @@ class HashProcessor
      */
     public function setFiles($files)
     {
-        array_map(function ($value) {
+        $files = array_map(function ($value) {
             return ROOT_PATH . $value;
         }, $files);
         $this->files = $files;
@@ -160,7 +160,7 @@ class HashProcessor
      */
     public function setFolders($folders)
     {
-        array_map(function ($value) {
+        $folders = array_map(function ($value) {
             return ROOT_PATH . $value;
         }, $folders);
         $this->folders = $folders;
